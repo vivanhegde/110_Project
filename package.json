@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/vivanhegde/110_Project#readme",
   "devDependencies": {
+    "jsdom": "^30.1.3",
     "typescript": "^7.0.2",
     "vitest": "^5.0.5"
   },
