@@ -1,4 +1,4 @@
-import { ExampleStep, WorkedExample } from "./types";
+import type { ExampleStep, WorkedExample } from "./types";
 
 export class WorkedExampleModel {
     private example: WorkedExample;
