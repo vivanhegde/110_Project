@@ -60,4 +60,8 @@ export class PlateController {
         return this.model == null ? 0 : this.model.getSlicesOnPlate();
     }
 
+    public isSliceOnPlate(sliceId: number): boolean {
+        return this.model == null ? false : this.model.isOnPlate(sliceId);
+    }
+
 }
