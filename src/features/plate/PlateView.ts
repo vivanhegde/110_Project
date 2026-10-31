@@ -1,27 +1,30 @@
 import Konva from "konva";
 import { PlateController } from "./PlateController";
+import { denomToWord } from "../../shared/denomToWord";
 
 export class PlateView {
     private stage : Konva.Stage;
     private layer : Konva.Layer;
 
-    private readonly radius = 120; //pizza radius
+    private readonly radius = 100; //pizza radius
     private readonly trayX = 200;  //tray pos (left)
-    private readonly trayY = 220;
+    private readonly trayY = 240;
     private readonly plateX = 600; //plate pos (right)
-    private readonly plateY = 220;
-    private readonly plateRadius = 140;
+    private readonly plateY = 240;
+    private readonly plateRadius = 120;
 
+    private backgroundLayer: Konva.Layer;
     private labelLayer: Konva.Layer;
-    private placedText: Konva.Text;
+
+    private plateBottomText: Konva.Text;
+    private trayBottomText: Konva.Text;
     private numeratorText: Konva.Text;
     private denominatorText: Konva.Text;
-    private trayBottomText: Konva.Text;
-    private trayTitle: Konva.Text;
-    private plateTitle: Konva.Text;
 
     private slices : Konva.Group[] = [];
     private controller : PlateController | null = null;
+
+    private titleText: Konva.Text;
     
     public constructor(containerId : string) {
         this.stage = new Konva.Stage({
@@ -29,13 +32,18 @@ export class PlateView {
             width: 800,
             height: 500,
         });
+
+        this.backgroundLayer = new Konva.Layer();
+        this.stage.add(this.backgroundLayer);
+        this.drawBackground();
+
         this.labelLayer = new Konva.Layer();
         this.stage.add(this.labelLayer);
 
         this.layer = new Konva.Layer();
         this.stage.add(this.layer);
 
-        this.placedText = new Konva.Text({
+        this.plateBottomText = new Konva.Text({
             x: this.plateX - 150,
             y: this.plateY + this.plateRadius + 15,
             width: 300,
@@ -44,22 +52,55 @@ export class PlateView {
             fill: "#8A6D5A",
             text: "",
         });
-        this.labelLayer.add(this.placedText);
+        this.labelLayer.add(this.plateBottomText);
+
+        this.trayBottomText = new Konva.Text({
+            x: this.trayX - 150,
+            y: this.trayY + this.plateRadius + 15,
+            width: 300,
+            align: "center",
+            fontSize: 18,
+            fill: "#8A6D5A",
+            text: "",
+        });
+
+        this.labelLayer.add(this.trayBottomText);
+            this.labelLayer.add(new Konva.Text({
+            x: this.trayX - 150,
+            y: this.trayY - this.plateRadius - 40,
+            width: 300,
+            align: "center",
+            fontSize: 18,
+            fontStyle: "bold",
+            fill: "#4A2E1F",
+            text: "Slice tray",
+        }));
+
+        this.labelLayer.add(new Konva.Text({
+            x: this.plateX - 150,
+            y: this.plateY - this.plateRadius - 40,
+            width: 300,
+            align: "center",
+            fontSize: 18,
+            fontStyle: "bold",
+            fill: "#4A2E1F",
+            text: "Your order plate",
+        }));
 
         const fractionX = 170;
         const fractionY = 440;
 
         this.labelLayer.add(new Konva.Text({
             x: 20,
-            y: fractionY - 10,
+            y: fractionY,
             fontSize: 20,
             fill: "#8A6D5A",
             text: "On your plate",
         }));
 
         this.numeratorText = new Konva.Text({
-            x: fractionX,
-            y: fractionY - 30,
+            x: fractionX-15,
+            y: fractionY - 20,
             width: 40,
             align: "center",
             fontSize: 24,
@@ -70,14 +111,14 @@ export class PlateView {
         this.labelLayer.add(this.numeratorText);
 
         this.labelLayer.add(new Konva.Line({
-            points: [fractionX + 5, fractionY, fractionX + 35, fractionY],
+            points: [fractionX - 10, fractionY+10, fractionX + 20, fractionY+10],
             stroke: "#4A2E1F",
             strokeWidth: 2,
         }));
 
         this.denominatorText = new Konva.Text({
-            x: fractionX,
-            y: fractionY + 6,
+            x: fractionX-15,
+            y: fractionY + 15,
             width: 40,
             align: "center",
             fontSize: 24,
@@ -87,23 +128,119 @@ export class PlateView {
         });
         this.labelLayer.add(this.denominatorText);
 
-        this.trayBottomText = new Konva.Text({
-            x: fractionX,
-            y: fractionY + 6,
-            width: 40,
-            align: "center",
-            fontSize: 24,
+        this.titleText = new Konva.Text({
+            x: 30,
+            y: 0,
+            height: 60,
+            verticalAlign: "middle",
+            fontSize: 20,
             fontStyle: "bold",
             fill: "#4A2E1F",
-            text: "",
+            text: "✋ Drag slices onto the plate to make (placeholder)'s order.",
         });
-        this.labelLayer.add(this.trayBottomText);
+        this.labelLayer.add(this.titleText);
+
+        const midX = (this.trayX + this.plateX) / 2;
+
+        this.labelLayer.add(new Konva.Arrow({
+            points: [midX - 22, this.trayY - 10, midX + 22, this.trayY - 10],
+            stroke: "#A0603A",
+            fill: "#A0603A",
+            strokeWidth: 2,
+            pointerLength: 8,
+            pointerWidth: 10,
+            lineCap: "round",
+        }));
+
+        this.labelLayer.add(new Konva.Text({
+            x: midX - 60,
+            y: this.trayY + 15,
+            width: 120,
+            align: "center",
+            fontSize: 15,
+            fontStyle: "bold",
+            fill: "#A0603A",
+            text: "drag slices",
+        }));
+
     }
 
     public setController(controller: PlateController): void {
         this.controller = controller;
     }
+
+    public setCustomerName(customerName: string): void {
+        this.titleText.text(`✋ Drag slices onto the plate to make ${customerName}'s order.`);
+    }
     
+    private drawBackground(): void {
+        const width = this.stage.width();
+        const height = this.stage.height();
+
+        const borderWidth = 2;
+        const headerHeight = 60;   // white strip above the brown area
+        const footerHeight = 90;   // white strip below (fraction, buttons)
+
+        // outlined card
+        this.backgroundLayer.add(new Konva.Rect({
+            x: borderWidth / 2,
+            y: borderWidth / 2,
+            width: width - borderWidth,
+            height: height - borderWidth,
+            cornerRadius: 24,
+            fill: "#FFFFFF",
+            stroke: "#EADBC8",
+            strokeWidth: borderWidth,
+        }));
+
+        // brown middle area
+        this.backgroundLayer.add(new Konva.Rect({
+            x: borderWidth,
+            y: headerHeight,
+            width: width - borderWidth * 2,
+            height: height - headerHeight - footerHeight,
+            fill: "#F5E6D3",
+        }));
+
+        // tray
+        this.backgroundLayer.add(new Konva.Circle({
+            x: this.trayX,
+            y: this.trayY,
+            radius: this.plateRadius+4,
+            fill: "#FFF8EC",
+            stroke: "#EADBC8",
+            strokeWidth: 3,
+        }));
+
+        this.backgroundLayer.add(new Konva.Circle({
+            x: this.trayX,
+            y: this.trayY,
+            radius: this.plateRadius-8,
+            fill: "#FFF8EC",
+            stroke: "#EADBC8",
+            strokeWidth: 3,
+        }));
+
+        // plate
+        this.backgroundLayer.add(new Konva.Circle({
+            x: this.plateX,
+            y: this.plateY,
+            radius: this.plateRadius+4,
+            fill: "#FFF8EC",
+            stroke: "#EADBC8",
+            strokeWidth: 3,
+        }));
+
+        this.backgroundLayer.add(new Konva.Circle({
+            x: this.plateX,
+            y: this.plateY,
+            radius: this.plateRadius-8,
+            fill: "#FFF8EC",
+            stroke: "#EADBC8",
+            strokeWidth: 3,
+        }));
+    }
+
     private makeSlice(
         cx: number,
         cy: number,
@@ -192,15 +329,12 @@ export class PlateView {
     public showFraction(slices: number, denominator: number): void {
         this.numeratorText.text(String(slices));
         this.denominatorText.text(String(denominator));
-        this.placedText.text(`${slices} of ${denominator} slices placed`);
+        this.plateBottomText.text(`${slices} of ${denominator} slices placed`);
     }
 
     public showTrayText(denominator: number): void {
-        /*
-        switch denominator:
-            case 2:
-*/
-        this.placedText.text(`Each slice is 1 eighth`);
+        let denomWord = denomToWord(denominator);
+        this.trayBottomText.text(`Each slice is 1 ${denomWord}`);
     }
 
     public snapToPlateSlot(sliceId: number, slotIndex: number, denominator: number): void {

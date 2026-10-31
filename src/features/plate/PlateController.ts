@@ -22,6 +22,7 @@ export class PlateController {
         model.reset(denominator);
         view.drawOrder(denominator);
         view.showFraction(model.getSlicesOnPlate(), denominator);
+        view.showTrayText(denominator);
     }
 
     public sliceDroppedOnPlate(sliceId: number, denominator: number): void {
