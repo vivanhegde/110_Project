@@ -339,22 +339,30 @@ export class PlateView {
 
     public snapToPlateSlot(sliceId: number, slotIndex: number, denominator: number): void {
         const slice = this.slices[sliceId];
+        const target = slotIndex * (360 / denominator) - 90;
         slice.to({
             x: this.plateX,
             y: this.plateY,
-            rotation: slotIndex * (360 / denominator) - 90,
+            rotation: this.nearestRotation(slice.rotation(), target),
             duration: 0.15,
         });
     }
 
     public snapToTraySlot(sliceId: number, slotIndex: number, denominator: number): void {
         const slice = this.slices[sliceId];
+        const target = slotIndex * (360 / denominator) - 90;
         slice.to({
             x: this.trayX,
             y: this.trayY,
-            rotation: slotIndex * (360 / denominator) - 90,
+            rotation: this.nearestRotation(slice.rotation(), target),
             duration: 0.15,
         });
     }
 
+    // Returns the angle equal to target (mod 360) that is closest to current,
+    // so the tween turns the short way.
+    private nearestRotation(current: number, target: number): number {
+        const diff = ((((target - current) % 360) + 540) % 360) - 180;
+        return current + diff;
+    }
 }
