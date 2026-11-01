@@ -1,0 +1,58 @@
+/* Scope the screen styles to subtraction practice. */
+.subtraction-game {
+  max-width: 800px;
+  margin: 28px auto;
+  padding: 0 16px 28px;
+  color: #4a2e1f;
+  font-family: Arial, sans-serif;
+  line-height: 1.5;
+}
+
+/* Keep the heading and mode links compact. */
+.subtraction-game h1 { margin-bottom: 4px; }
+.subtraction-game header > p { margin-top: 0; }
+.subtraction-game nav { display: flex; gap: 24px; flex-wrap: wrap; }
+.subtraction-game a { color: #386044; text-underline-offset: 4px; }
+
+/* Display the customer's operands above the pizza. */
+.subtraction-order {
+  margin: 20px 0 16px;
+  padding: 16px 20px;
+  border: 1px solid #eadbc8;
+  border-radius: 16px;
+  background: #fff8ec;
+}
+.subtraction-order p { margin: 0; }
+.subtraction-order h2 { margin: 6px 0; font-size: 28px; }
+
+/* Keep the scaled canvas inside smaller screens. */
+.subtraction-canvas { overflow: hidden; }
+
+/* Provide visible controls and keyboard focus. */
+.subtraction-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+.subtraction-game button {
+  min-height: 44px;
+  padding: 10px 20px;
+  border: 1px solid #4a2e1f;
+  border-radius: 10px;
+  background: #fff8ec;
+  color: #4a2e1f;
+  font: inherit;
+  font-weight: bold;
+  cursor: pointer;
+}
+.subtraction-game #check-order { background: #386044; border-color: #386044; color: white; }
+.subtraction-game button:disabled { opacity: 0.5; cursor: default; }
+.subtraction-game :focus-visible { outline: 3px solid #b96a24; outline-offset: 4px; }
+
+/* Show the shared feedback states without changing their messages. */
+.subtraction-feedback {
+  margin-top: 20px;
+  padding: 16px 20px;
+  border: 2px solid #b96a24;
+  border-radius: 16px;
+  background: #fff8ec;
+}
+.subtraction-feedback[data-result="correct"] { border-color: #386044; background: #eef6ed; }
+.subtraction-feedback h2 { margin-top: 0; font-size: 22px; }
+.subtraction-equation { font-size: 24px; font-weight: bold; }

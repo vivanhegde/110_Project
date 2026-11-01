@@ -7,6 +7,9 @@ import { SubtractionOrderModel } from "../src/features/pizza/SubtractionOrderMod
 // Import order creation.
 import { createSubtractionOrder } from "../src/features/pizza/CreateSubtractionOrder";
 
+// Import the shared drag state.
+import { PlateModel } from "../src/features/plate/PlateModel";
+
 // Create a fresh model for 5/8 - 2/8.
 function createModel(): SubtractionOrderModel {
   return new SubtractionOrderModel(createSubtractionOrder(5, 2, 8));
@@ -14,6 +17,36 @@ function createModel(): SubtractionOrderModel {
 
 // Test subtraction slice state and answer checking.
 describe("SubtractionOrderModel", () => {
+  // Share slice identities with the drag controller.
+  it("should use the supplied plate as its slice state", () => {
+    const plate = new PlateModel(8); // Shared drag state.
+    const model = new SubtractionOrderModel(createSubtractionOrder(5, 2, 8), plate); // Connected model.
+    model.removeSlice(3);
+    expect(plate.isOnPlate(3)).toBe(true);
+    expect(plate.getSlicesOnPlate()).toBe(1);
+    expect(model.getSelectedSlices()).toBe(4);
+    model.restoreSlice(3);
+    expect(plate.isOnPlate(3)).toBe(false);
+    expect(plate.getSlicesOnPlate()).toBe(0);
+    expect(model.getSelectedSlices()).toBe(5);
+  });
+
+  // Reject unrelated, fractional, and duplicate slice operations.
+  it("should validate explicit slice IDs without corrupting the count", () => {
+    const model = createModel(); // Five valid slices with IDs 0 to 4.
+    expect(() => model.restoreSlice(7)).toThrow("Invalid subtraction slice");
+    expect(() => model.removeSlice(1.5)).toThrow("Invalid subtraction slice");
+    expect(() => model.removeSlice(-2)).toThrow("Invalid subtraction slice");
+    expect(() => model.removeSlice(-1)).toThrow("Invalid subtraction slice");
+    expect(model.getSelectedSlices()).toBe(5);
+    model.removeSlice(2);
+    expect(() => model.removeSlice(2)).toThrow("Slice is already on the plate");
+    expect(model.getSelectedSlices()).toBe(4);
+    model.restoreSlice(2);
+    expect(() => model.restoreSlice(2)).toThrow("Slice is not on the plate");
+    expect(model.getSelectedSlices()).toBe(5);
+  });
+
   // Start with the first operand's slice count.
   it("should start with 5 slices", () => {
     const model = createModel(); // Fresh subtraction model.
