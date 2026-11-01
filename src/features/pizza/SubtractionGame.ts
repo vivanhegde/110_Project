@@ -23,7 +23,7 @@ export function startSubtractionGame(app: HTMLElement): void {
     <main class="subtraction-game">
       <header>
         <h1>Fraction Food Truck</h1>
-        <p>Move slices from the tray to the order plate to take them away.</p>
+        <p>Move slices from the tray to the return plate to take them away.</p>
         <nav aria-label="Practice navigation">
           <a href="./">Back to pizza practice</a>
         </nav>
@@ -34,7 +34,7 @@ export function startSubtractionGame(app: HTMLElement): void {
         <p id="order-request"></p>
       </section>
       <div class="subtraction-canvas">
-        <div id="plate" role="group" aria-label="Slice tray and order plate"></div>
+        <div id="plate" role="group" aria-label="Slice tray and return plate"></div>
       </div>
       <div class="subtraction-actions">
         <button id="check-order" type="button">Check Order</button>

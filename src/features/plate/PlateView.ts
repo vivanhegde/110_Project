@@ -249,7 +249,7 @@ export class PlateView {
     public setCustomerName(customerName: string): void {
         // Describe the correct action for the current operation.
         this.titleText.text(this.subtractionOrder
-            ? `Drag slices onto the order plate to take them away for ${customerName}.`
+            ? `Drag slices onto the return plate to take them away for ${customerName}.`
             : `✋ Drag slices onto the plate to make ${customerName}'s order.`);
     }
 
@@ -258,7 +258,7 @@ export class PlateView {
         this.subtractionOrder = order ? { ...order } : null;
         // Reset instructions before applying the current customer's name.
         this.titleText.text(order
-            ? "Drag slices onto the order plate to take them away."
+            ? "Drag slices onto the return plate to take them away."
             : "✋ Drag slices onto the plate to make the order.");
         this.fractionTitle.text(order ? "Slices left" : "On your plate");
         this.hideDropHighlight();
@@ -347,7 +347,9 @@ export class PlateView {
         const over = this.isOverPlate(x, y);
 
         this.dropHighlight.visible(over);
-        this.plateTitle.text(over ? "Drop your slice here" : "Your order plate");
+        // Keep each operation's plate name when the pointer leaves the target.
+        this.plateTitle.text(over ? "Drop your slice here"
+            : this.subtractionOrder ? "Slice return plate" : "Your order plate");
         this.plateTitle.fill(over ? "#2E6B47" : "#4A2E1F");
 
         const fromTray = this.controller == null ? true : !this.controller.isSliceOnPlate(sliceId);
@@ -361,7 +363,8 @@ export class PlateView {
     private hideDropHighlight(): void {
         this.dropHighlight.visible(false);
         this.sliceBadge.visible(false);
-        this.plateTitle.text("Your order plate");
+        // Restore the subtraction label after each drop.
+        this.plateTitle.text(this.subtractionOrder ? "Slice return plate" : "Your order plate");
         this.plateTitle.fill("#4A2E1F");
     }
 
