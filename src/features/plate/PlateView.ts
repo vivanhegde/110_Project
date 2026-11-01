@@ -249,7 +249,7 @@ export class PlateView {
     public setCustomerName(customerName: string): void {
         // Describe the correct action for the current operation.
         this.titleText.text(this.subtractionOrder
-            ? `Drag slices onto the return plate to take them away for ${customerName}.`
+            ? `✋ Drag slices onto the return plate to take them away for ${customerName}.`
             : `✋ Drag slices onto the plate to make ${customerName}'s order.`);
     }
 
@@ -258,7 +258,7 @@ export class PlateView {
         this.subtractionOrder = order ? { ...order } : null;
         // Reset instructions before applying the current customer's name.
         this.titleText.text(order
-            ? "Drag slices onto the return plate to take them away."
+            ? "✋ Drag slices onto the return plate to take them away."
             : "✋ Drag slices onto the plate to make the order.");
         this.fractionTitle.text(order ? "Slices left" : "On your plate");
         this.hideDropHighlight();
