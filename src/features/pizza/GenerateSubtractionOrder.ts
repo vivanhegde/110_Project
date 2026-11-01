@@ -2,7 +2,7 @@
 import { createSubtractionOrder } from "./CreateSubtractionOrder";
 import type { SubtractionOrder } from "./types";
 
-// Generate a valid same-denominator subtraction order.
+// Generate a random same-denominator subtraction order.
 export function generateSubtractionOrder(
   random: () => number = Math.random, // Injectable source for predictable tests.
 ): SubtractionOrder {
