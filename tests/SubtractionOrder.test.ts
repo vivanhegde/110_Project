@@ -2,7 +2,7 @@
 import { describe, it, expect } from "vitest";
 
 // Import the order creation function.
-import { createSubtractionOrder } from "../src/features/pizza/createSubtractionOrder";
+import { createSubtractionOrder } from "../src/features/pizza/CreateSubtractionOrder";
 
 // Test subtraction order creation.
 describe("createSubtractionOrder", () => {
