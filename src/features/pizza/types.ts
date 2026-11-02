@@ -1,6 +1,14 @@
 export interface PizzaOrder {
   numerator: number;
   denominator: number;
+
+  // Addition operands with a common denominator.
+  firstNumerator?: number;
+  secondNumerator?: number;
+
+  // Information displayed by the view.
+  customerName?: string;
+  request?: string;
 }
 
 export interface AnswerResult {

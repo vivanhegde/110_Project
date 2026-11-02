@@ -1,9 +1,10 @@
+
 import { PlateView } from "./features/plate/PlateView";
 import { PlateModel } from "./features/plate/PlateModel";
 import { PlateController } from "./features/plate/PlateController";
 
-// Import the subtraction screen composition.
 import { startSubtractionGame } from "./features/pizza/SubtractionGame";
+import { startAdditionGame } from "./features/pizza/AdditionGame";
 
 const app = document.getElementById("app");
 
@@ -11,12 +12,35 @@ if (!app) {
   throw new Error("App container not found");
 }
 
-// Keep the original demo as the default page.
-if (new URLSearchParams(window.location.search).get("mode") !== "subtraction") {
+const mode = new URLSearchParams(window.location.search)
+  .get("mode");
+
+//Addition mode for User Story 1.
+if (mode === "addition") {
+  startAdditionGame(app);
+
+} else if (mode === "subtraction") {
+  //Preserves the existing subtraction game
+  startSubtractionGame(app);
+
+} else {
+  //Keep original plate demo as the default
   app.innerHTML = `
     <h1>Fraction Food Truck</h1>
     <p>Welcome to the pizza fraction game!</p>
-    <p><button id="start-subtraction" type="button">Subtraction Practice</button></p>
+
+    <p>
+      <a href="?mode=addition">
+        Addition Practice
+      </a>
+    </p>
+
+    <p>
+      <a href="?mode=subtraction">
+        Subtraction Practice
+      </a>
+    </p>
+
     <div id="plate"></div>
   `;
 
@@ -31,14 +55,5 @@ if (new URLSearchParams(window.location.search).get("mode") !== "subtraction") {
   view.setController(controller);
 
   controller.startOrder(denominator);
-
   view.setCustomerName("Joe");
-
-  // Open subtraction only when the student chooses it.
-  app.querySelector("#start-subtraction")?.addEventListener("click", () => {
-    window.location.search = "?mode=subtraction";
-  });
-} else {
-  // Start subtraction with the shared plate components.
-  startSubtractionGame(app);
 }
