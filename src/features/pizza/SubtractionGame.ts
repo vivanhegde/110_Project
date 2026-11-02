@@ -1,3 +1,4 @@
+import { FeedbackView } from "../feedback/FeedbackView";
 // Import the existing plate components.
 import { PlateModel } from "../plate/PlateModel";
 import { PlateController } from "../plate/PlateController";
@@ -60,9 +61,8 @@ export function startSubtractionGame(app: HTMLElement): void {
   const view = new PlateView("plate"); // Shared pizza canvas.
   const plate = new PlateModel(order.denominator); // Authoritative slice state.
   const controller = new PlateController(); // Shared drag controller.
-  const feedback = new FeedbackController(new FeedbackModel()); // Shared feedback state.
+  const feedback = new FeedbackController(new FeedbackModel(), new FeedbackView(app)); // Shared feedback state.
   const checkButton = element<HTMLButtonElement>("#check-order"); // Answer submission.
-  const feedbackPanel = element<HTMLElement>("#order-feedback"); // Feedback container.
   const actionButton = element<HTMLButtonElement>("#feedback-action"); // Retry or next action.
 
   // Connect the same plate to drawing and answer checking.
@@ -71,9 +71,10 @@ export function startSubtractionGame(app: HTMLElement): void {
   view.setController(controller);
 
   // Initialize or reset an order without carrying over previous state.
-  function startOrder(): void {
+  function startOrder(newOrder = true): void {
     const customer = customers[customerIndex]; // Current customer name.
-    feedback.startNewOrder();
+    if (newOrder) feedback.startNewOrder();
+    else feedback.closeFeedback();
     controller.startSubtractionOrder(order);
     view.setCustomerName(customer);
     view.setInteractionEnabled(true);
@@ -82,7 +83,6 @@ export function startSubtractionGame(app: HTMLElement): void {
       `${order.initialNumerator}/${order.denominator} − ${order.subtractNumerator}/${order.denominator} = ?`;
     element("#order-request").textContent =
       `${customer} has ${order.initialNumerator}/${order.denominator} of a pizza. Take away ${order.subtractNumerator}/${order.denominator}. How much is left in the tray?`;
-    feedbackPanel.hidden = true;
     checkButton.disabled = false;
   }
 
@@ -90,21 +90,9 @@ export function startSubtractionGame(app: HTMLElement): void {
   checkButton.addEventListener("click", () => {
     if (feedback.getCurrentFeedback()) return;
     const result = controller.submitSubtractionAnswer(); // Actual plate answer.
-    const response = feedback.showFeedback(order, controller.getRemainingSlices(), result); // Shared feedback.
-    element("#feedback-title").textContent = response.title;
-    element("#feedback-message").textContent = response.message;
-    actionButton.textContent = response.actionLabel;
-    feedbackPanel.dataset.result = response.type;
-    const equation = element("#solved-equation"); // Completed equation.
-    equation.hidden = !result.correct;
-    equation.textContent =
-      `${order.initialNumerator}/${order.denominator} − ${order.subtractNumerator}/${order.denominator} = ${order.numerator}/${order.denominator}`;
-    feedbackPanel.hidden = false;
+    feedback.showFeedback(order, controller.getRemainingSlices(), result);
     checkButton.disabled = true;
     view.setInteractionEnabled(false);
-    // Bring feedback into view on shorter preview panels.
-    actionButton.focus({ preventScroll: true });
-    feedbackPanel.scrollIntoView({ block: "nearest", behavior: "smooth" });
   });
 
   // Continue to a new order or resume the unchanged plate.
@@ -118,14 +106,17 @@ export function startSubtractionGame(app: HTMLElement): void {
       startOrder();
     } else {
       feedback.closeFeedback();
-      feedbackPanel.hidden = true;
-      checkButton.disabled = false;
+        checkButton.disabled = false;
       view.setInteractionEnabled(true);
     }
     checkButton.focus();
   });
 
   // Restart the current order with its original slice count.
-  element("#reset-order").addEventListener("click", startOrder);
+  element("#reset-order").addEventListener("click", () => {
+    // Resetting slices is still the same order; preserve its learning progress.
+    startOrder(false);
+    checkButton.focus();
+  });
   startOrder();
 }
