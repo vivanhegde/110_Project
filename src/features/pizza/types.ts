@@ -1,6 +1,12 @@
 export interface PizzaOrder {
-  numerator: number;
-  denominator: number;
+  numerator: number; //Total slices needed
+  denominator: number; //Total slices in one pizza
+
+  //Additional fields for fraction addition orders
+  firstNumerator?: number;
+  secondNumerator?: number;
+  customerName?: string;
+  request?: string;
 }
 
 export interface AnswerResult {
