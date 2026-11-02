@@ -10,7 +10,7 @@ export interface PizzaDiagram {
 export interface Explanation {
   steps: string[];
   pizzas: PizzaDiagram[];
-  rows?: { label: string; operator: string; pizzas: PizzaDiagram[] }[];
+  rows?: { label: string; operator: string; pizzas: [PizzaDiagram, PizzaDiagram] }[];
 }
 
 /** Build teaching content from the order. */

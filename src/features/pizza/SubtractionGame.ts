@@ -107,7 +107,7 @@ export function startSubtractionGame(app: HTMLElement): void {
       startOrder();
     } else {
       feedback.closeFeedback();
-        checkButton.disabled = false;
+      checkButton.disabled = false;
       view.setInteractionEnabled(true);
     }
     checkButton.focus();

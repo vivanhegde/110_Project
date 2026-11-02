@@ -24,7 +24,7 @@ export function renderExplanation(container: HTMLElement, explanation?: Explanat
     const visual = document.createElement("div");
     visual.className = "explanation-pizza";
     visual.setAttribute("role", "img");
-    visual.setAttribute("aria-label", `${pizza.label}: ${pizza.filledSlices} of ${pizza.denominator} equal slices remain${pizza.fadedSlices ? `; ${pizza.fadedSlices} removed slices shown faded` : ""}`);
+    visual.setAttribute("aria-label", `${pizza.label}: ${pizza.filledSlices} of ${pizza.denominator} equal slices${pizza.fadedSlices ? `; ${pizza.fadedSlices} slices moving, shown faded` : ""}`);
     const degrees = 360 / pizza.denominator;
     const stops = Array.from({ length: pizza.denominator }, (_, index) => {
       const start = index * degrees;
