@@ -1,3 +1,5 @@
+import type { Explanation } from "./Explanation";
+
 export type FeedbackType = "correct" | "tooFew" | "tooMany";
 
 export interface Feedback {
@@ -6,4 +8,5 @@ export interface Feedback {
   message: string;
   pointsEarned: number;
   actionLabel: string;
+  explanation?: Explanation;
 }

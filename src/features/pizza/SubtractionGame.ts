@@ -46,6 +46,7 @@ export function startSubtractionGame(app: HTMLElement): void {
         <h2 id="feedback-title"></h2>
         <p id="feedback-message"></p>
         <p id="solved-equation" class="subtraction-equation" hidden></p>
+        <section id="order-explanation" aria-label="Step-by-step explanation" hidden></section>
         <button id="feedback-action" type="button"></button>
       </section>
     </main>
