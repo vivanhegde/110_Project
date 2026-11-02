@@ -13,12 +13,14 @@ const twoOrders: PizzaOrder[] = [
 ];
 
 //Plays one order the way the game will: wrong answers first, then the right one
-function playOrder(level: LevelController, feedback: FeedbackController, wrongAnswers: number[]): void {
+function playOrder(level: LevelController, feedback: FeedbackController, wrongAnswers: number[]): void 
+{
   const pizzaModel = new PizzaOrderModel(level.getCurrentOrder());
   const pizza = new PizzaOrderController(pizzaModel);
   feedback.startNewOrder();
 
-  for (const wrong of wrongAnswers) {
+  for (const wrong of wrongAnswers) 
+  {
     pizza.selectSlice(wrong);
     feedback.showFeedback(pizzaModel.getOrder(), wrong, pizza.submitAnswer());
     feedback.closeFeedback();
@@ -30,12 +32,14 @@ function playOrder(level: LevelController, feedback: FeedbackController, wrongAn
 }
 
 describe("LevelController", () => {
-  it("should give the current order to the pizza feature", () => {
+  it("should give the current order to the pizza feature", () => 
+  {
     const level = new LevelController(new LevelModel(1, twoOrders));
     expect(level.getCurrentOrder()).toEqual({ numerator: 3, denominator: 8 });
   });
 
-  it("should pass a level when every order is right on the first try", () => {
+  it("should pass a level when every order is right on the first try", () => 
+  {
     const level = new LevelController(new LevelModel(1, twoOrders));
     const feedback = new FeedbackController(new FeedbackModel());
     playOrder(level, feedback, []);
@@ -45,7 +49,8 @@ describe("LevelController", () => {
     expect(level.getResult().score).toBe(200);
   });
 
-  it("should not pass when an order needed a retry in a two order level", () => {
+  it("should not pass when an order needed a retry in a two order level", () => 
+  {
     const level = new LevelController(new LevelModel(1, twoOrders));
     const feedback = new FeedbackController(new FeedbackModel());
     playOrder(level, feedback, [2]);
@@ -63,7 +68,8 @@ describe("LevelController", () => {
     expect(level.isLevelComplete()).toBe(false);
   });
 
-  it("should restart the level at order 1", () => {
+  it("should restart the level at order 1", () => 
+  {
     const level = new LevelController(new LevelModel(1, twoOrders));
     const feedback = new FeedbackController(new FeedbackModel());
     playOrder(level, feedback, []);

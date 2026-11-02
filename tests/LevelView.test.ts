@@ -4,14 +4,16 @@ import { LevelView } from "../src/features/level/LevelView";
 import type { LevelProgress, LevelResult } from "../src/features/level/types";
 
 //Creates empty header and results elements for each test
-function setup(): { view: LevelView; header: HTMLElement; results: HTMLElement } {
+function setup(): { view: LevelView; header: HTMLElement; results: HTMLElement } 
+{
   const header = document.createElement("div");
   const results = document.createElement("div");
   results.hidden = true;
   return { view: new LevelView(header, results), header, results };
 }
 
-const progress: LevelProgress = {
+const progress: LevelProgress = 
+{
   levelNumber: 1,
   currentOrderNumber: 3,
   totalOrders: 5,
@@ -20,7 +22,8 @@ const progress: LevelProgress = {
   isComplete: false,
 };
 
-const passedResult: LevelResult = {
+const passedResult: LevelResult = 
+{
   levelNumber: 1,
   passed: true,
   firstTryCorrectCount: 4,
@@ -33,8 +36,10 @@ const passedResult: LevelResult = {
   ],
 };
 
-describe("LevelView", () => {
-  it("should show the level, order count, progress bar, and score in the header", () => {
+describe("LevelView", () => 
+{
+  it("should show the level, order count, progress bar, and score in the header", () => 
+  {
     const { view, header } = setup();
     view.renderHeader(progress);
     expect(header.querySelector(".level-number")?.textContent).toBe("Level 1");
@@ -43,7 +48,8 @@ describe("LevelView", () => {
     expect(header.querySelector(".score")?.textContent).toBe("Score: 200");
   });
 
-  it("should replace the old header instead of adding a second one", () => {
+  it("should replace the old header instead of adding a second one", () => 
+  {
     const { view, header } = setup();
     view.renderHeader(progress);
     view.renderHeader({ ...progress, currentOrderNumber: 4 });
@@ -51,7 +57,8 @@ describe("LevelView", () => {
     expect(header.querySelector(".order-count")?.textContent).toBe("Order 4 of 5");
   });
 
-  it("should show the level complete screen with Play Again", () => {
+  it("should show the level complete screen with Play Again", () => 
+  {
     const { view, results } = setup();
     view.renderResults(passedResult, () => {});
     expect(results.hidden).toBe(false);
@@ -62,14 +69,16 @@ describe("LevelView", () => {
     expect(results.querySelector(".restart-button")?.textContent).toBe("Play Again");
   });
 
-  it("should show the level not passed screen with Retry Level", () => {
+  it("should show the level not passed screen with Retry Level", () => 
+  {
     const { view, results } = setup();
     view.renderResults({ ...passedResult, passed: false, firstTryCorrectCount: 3 }, () => {});
     expect(results.querySelector("h2")?.textContent).toBe("Level 1 not passed");
     expect(results.querySelector(".restart-button")?.textContent).toBe("Retry Level");
   });
 
-  it("should call onRestart when the button is pressed", () => {
+  it("should call onRestart when the button is pressed", () => 
+  {
     const { view, results } = setup();
     const onRestart = vi.fn();
     view.renderResults(passedResult, onRestart);
@@ -77,7 +86,8 @@ describe("LevelView", () => {
     expect(onRestart).toHaveBeenCalledTimes(1);
   });
 
-  it("should hide and clear the results screen", () => {
+  it("should hide and clear the results screen", () => 
+  {
     const { view, results } = setup();
     view.renderResults(passedResult, () => {});
     view.hideResults();

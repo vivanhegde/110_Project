@@ -12,14 +12,16 @@ const fiveOrders: PizzaOrder[] = [
 ];
 
 //Solves every order: the first `wrongCount` orders took one retry, the rest were first try
-function finishLevel(level: LevelModel, wrongCount: number): void {
+function finishLevel(level: LevelModel, wrongCount: number): void 
+{
   for (let i = 0; i < 5; i++) {
     level.recordCorrectOrder(i < wrongCount ? 1 : 0, 100);
   }
 }
 
 describe("LevelModel", () => {
-  it("should start on order 1 with a score of 0", () => {
+  it("should start on order 1 with a score of 0", () => 
+  {
     const level = new LevelModel(1, fiveOrders);
     expect(level.getProgress()).toEqual({
       levelNumber: 1,
@@ -32,7 +34,8 @@ describe("LevelModel", () => {
     expect(level.getCurrentOrder()).toEqual({ numerator: 5, denominator: 8 });
   });
 
-  it("should move to the next order and add points after a correct order", () => {
+  it("should move to the next order and add points after a correct order", () => 
+  {
     const level = new LevelModel(1, fiveOrders);
     level.recordCorrectOrder(0, 100);
     expect(level.getProgress().currentOrderNumber).toBe(2);
@@ -41,7 +44,8 @@ describe("LevelModel", () => {
     expect(level.getCurrentOrder()).toEqual({ numerator: 3, denominator: 8 });
   });
 
-  it("should be complete after the last order and keep showing the last order number", () => {
+  it("should be complete after the last order and keep showing the last order number", () => 
+  {
     const level = new LevelModel(1, fiveOrders);
     finishLevel(level, 0);
     expect(level.isComplete()).toBe(true);
@@ -49,7 +53,8 @@ describe("LevelModel", () => {
     expect(level.getProgress().completedOrders).toBe(5);
   });
 
-  it("should pass with 4 of 5 first try correct", () => {
+  it("should pass with 4 of 5 first try correct", () => 
+  {
     const level = new LevelModel(1, fiveOrders);
     finishLevel(level, 1);
     const result = level.getResult();
@@ -58,21 +63,24 @@ describe("LevelModel", () => {
     expect(result.requiredToPass).toBe(4);
   });
 
-  it("should not pass with 3 of 5 first try correct", () => {
+  it("should not pass with 3 of 5 first try correct", () => 
+  {
     const level = new LevelModel(1, fiveOrders);
     finishLevel(level, 2);
     expect(level.getResult().passed).toBe(false);
     expect(level.getResult().firstTryCorrectCount).toBe(3);
   });
 
-  it("should still add points for an order solved after a retry", () => {
+  it("should still add points for an order solved after a retry", () => 
+  {
     const level = new LevelModel(1, fiveOrders);
     finishLevel(level, 5);
     expect(level.getResult().score).toBe(500);
     expect(level.getResult().passed).toBe(false);
   });
 
-  it("should record each order and whether it was first try", () => {
+  it("should record each order and whether it was first try", () => 
+  {
     const level = new LevelModel(1, fiveOrders);
     finishLevel(level, 1);
     const records = level.getResult().records;
@@ -81,7 +89,8 @@ describe("LevelModel", () => {
     expect(records[1].firstTryCorrect).toBe(true);
   });
 
-  it("should require both orders in a two order level", () => {
+  it("should require both orders in a two order level", () => 
+  {
     const level = new LevelModel(1, fiveOrders.slice(0, 2));
     expect(level.getProgress().totalOrders).toBe(2);
     level.recordCorrectOrder(0, 100);
@@ -90,13 +99,15 @@ describe("LevelModel", () => {
     expect(level.getResult().passed).toBe(false);
   });
 
-  it("should use a custom pass requirement", () => {
+  it("should use a custom pass requirement", () => 
+  {
     const level = new LevelModel(1, fiveOrders, 2);
     finishLevel(level, 3);
     expect(level.getResult().passed).toBe(true);
   });
 
-  it("should reset score and progress to order 1 on restart", () => {
+  it("should reset score and progress to order 1 on restart", () => 
+  {
     const level = new LevelModel(1, fiveOrders);
     finishLevel(level, 0);
     level.restart();
@@ -106,27 +117,31 @@ describe("LevelModel", () => {
     expect(level.getCurrentOrder()).toEqual(fiveOrders[0]);
   });
 
-  it("should not give results before the level is complete", () => {
+  it("should not give results before the level is complete", () => 
+  {
     const level = new LevelModel(1, fiveOrders);
     level.recordCorrectOrder(0, 100);
     expect(() => level.getResult()).toThrow("Level is not complete yet");
   });
 
-  it("should not record or return orders after the level is complete", () => {
+  it("should not record or return orders after the level is complete", () => 
+  {
     const level = new LevelModel(1, fiveOrders);
     finishLevel(level, 0);
     expect(() => level.recordCorrectOrder(0, 100)).toThrow("Level is already complete");
     expect(() => level.getCurrentOrder()).toThrow("Level is already complete");
   });
 
-  it("should not change when the original order list is changed", () => {
+  it("should not change when the original order list is changed", () => 
+  {
     const orders = [...fiveOrders];
     const level = new LevelModel(1, orders);
     orders.pop();
     expect(level.getProgress().totalOrders).toBe(5);
   });
 
-  it("should reject invalid setup values", () => {
+  it("should reject invalid setup values", () => 
+  {
     expect(() => new LevelModel(0, fiveOrders)).toThrow("Invalid level number");
     expect(() => new LevelModel(1.5, fiveOrders)).toThrow("Invalid level number");
     expect(() => new LevelModel(1, [])).toThrow("A level needs at least one order");
@@ -134,7 +149,8 @@ describe("LevelModel", () => {
     expect(() => new LevelModel(1, fiveOrders, 6)).toThrow("Invalid pass requirement");
   });
 
-  it("should reject invalid attempts or points", () => {
+  it("should reject invalid attempts or points", () => 
+  {
     const level = new LevelModel(1, fiveOrders);
     expect(() => level.recordCorrectOrder(-1, 100)).toThrow("Invalid incorrect attempts");
     expect(() => level.recordCorrectOrder(0, -100)).toThrow("Invalid points earned");

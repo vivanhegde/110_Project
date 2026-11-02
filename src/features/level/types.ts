@@ -1,7 +1,8 @@
 import type { PizzaOrder } from "../pizza/types";
 
 //What happened on one order after the student solved it
-export interface OrderRecord {
+export interface OrderRecord 
+{
   order: PizzaOrder;
   //True only if the first Check Order was correct
   firstTryCorrect: boolean;
@@ -9,7 +10,8 @@ export interface OrderRecord {
 }
 
 //Everything the header needs: level number, "Order x of y", progress bar, and score
-export interface LevelProgress {
+export interface LevelProgress 
+{
   levelNumber: number;
   //Order the student is on, starting at 1
   currentOrderNumber: number;
@@ -21,7 +23,8 @@ export interface LevelProgress {
 }
 
 //Everything the results screen needs after the last order
-export interface LevelResult {
+export interface LevelResult 
+{
   levelNumber: number;
   passed: boolean;
   firstTryCorrectCount: number;
