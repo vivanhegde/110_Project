@@ -1,29 +1,38 @@
 import type { PizzaOrder } from "../pizza/types";
 
 //What happened on one order after the student solved it
-export interface OrderRecord 
+export interface OrderRecord
 {
+  //The order that was solved (can be an addition or subtraction order)
   order: PizzaOrder;
+
   //True only if the first Check Order was correct
   firstTryCorrect: boolean;
+
+  //Points the student got for this order
   pointsEarned: number;
 }
 
-//Everything the header needs: level number, "Order x of y", progress bar, and score
-export interface LevelProgress 
+//Everything the header needs to show
+export interface LevelProgress
 {
   levelNumber: number;
-  //Order the student is on, starting at 1
+
+  //The order the student is on, starting at 1
   currentOrderNumber: number;
+
   totalOrders: number;
-  //Orders finished so far, used to fill the progress bar
+
+  //How many orders are finished, used to fill the progress bar
   completedOrders: number;
+
   score: number;
+
   isComplete: boolean;
 }
 
-//Everything the results screen needs after the last order
-export interface LevelResult 
+//Everything the results screen needs to show
+export interface LevelResult
 {
   levelNumber: number;
   passed: boolean;
