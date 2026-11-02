@@ -2,6 +2,9 @@ import Konva from "konva";
 import { PlateController } from "./PlateController";
 import { denomToWord } from "../../shared/denomToWord";
 
+// Import subtraction display data.
+import type { SubtractionOrder } from "../pizza/types";
+
 export class PlateView {
     private stage : Konva.Stage;
     private layer : Konva.Layer;
@@ -23,6 +26,9 @@ export class PlateView {
     private trayBottomText: Konva.Text;
     private numeratorText: Konva.Text;
     private denominatorText: Konva.Text;
+    private fractionTitle: Konva.Text; // Addition or subtraction counter label.
+    private subtractionOrder: SubtractionOrder | null = null; // Current display mode.
+    private readonly resizeObserver: ResizeObserver; // Keep both plates visible in narrow previews.
 
     private dropHighlight: Konva.Group;
     private sliceBadge: Konva.Label;
@@ -162,13 +168,14 @@ export class PlateView {
         const fractionX = 170;
         const fractionY = 440;
 
-        this.labelLayer.add(new Konva.Text({
+        this.fractionTitle = new Konva.Text({
             x: 20,
             y: fractionY,
             fontSize: 20,
             fill: "#8A6D5A",
             text: "On your plate",
-        }));
+        });
+        this.labelLayer.add(this.fractionTitle);
 
         this.numeratorText = new Konva.Text({
             x: fractionX - 15,
@@ -218,6 +225,21 @@ export class PlateView {
             padding: 8,
         }));
         this.overlayLayer.add(this.sliceBadge);
+
+        // Scale the shared canvas without changing its logical coordinates.
+        this.resizeObserver = new ResizeObserver(() => this.fitToContainer());
+        this.resizeObserver.observe(this.stage.container());
+        this.fitToContainer();
+    }
+
+    // Fit the original 800 by 500 layout inside the available width.
+    private fitToContainer(): void {
+        const width = Math.min(800, this.stage.container().clientWidth); // Available width.
+        if (width <= 0 || this.stage.width() === width) return;
+        const scale = width / 800; // Display scale.
+        this.stage.width(width);
+        this.stage.height(500 * scale);
+        this.stage.scale({ x: scale, y: scale });
     }
 
     public setController(controller: PlateController): void {
@@ -225,7 +247,26 @@ export class PlateView {
     }
 
     public setCustomerName(customerName: string): void {
-        this.titleText.text(`✋ Drag slices onto the plate to make ${customerName}'s order.`);
+        // Describe the correct action for the current operation.
+        this.titleText.text(this.subtractionOrder
+            ? `✋ Drag slices onto the return plate to take them away for ${customerName}.`
+            : `✋ Drag slices onto the plate to make ${customerName}'s order.`);
+    }
+
+    // Reuse the existing canvas for subtraction or addition.
+    public setSubtractionMode(order: SubtractionOrder | null): void {
+        this.subtractionOrder = order ? { ...order } : null;
+        // Reset instructions before applying the current customer's name.
+        this.titleText.text(order
+            ? "✋ Drag slices onto the return plate to take them away."
+            : "✋ Drag slices onto the plate to make the order.");
+        this.fractionTitle.text(order ? "Slices left" : "On your plate");
+        this.hideDropHighlight();
+    }
+
+    // Pause dragging while feedback is open.
+    public setInteractionEnabled(enabled: boolean): void {
+        for (const slice of this.slices) slice.draggable(enabled);
     }
 
     private drawBackground(): void {
@@ -306,7 +347,9 @@ export class PlateView {
         const over = this.isOverPlate(x, y);
 
         this.dropHighlight.visible(over);
-        this.plateTitle.text(over ? "Drop your slice here" : "Your order plate");
+        // Keep each operation's plate name when the pointer leaves the target.
+        this.plateTitle.text(over ? "Drop your slice here"
+            : this.subtractionOrder ? "Slice return plate" : "Your order plate");
         this.plateTitle.fill(over ? "#2E6B47" : "#4A2E1F");
 
         const fromTray = this.controller == null ? true : !this.controller.isSliceOnPlate(sliceId);
@@ -320,7 +363,8 @@ export class PlateView {
     private hideDropHighlight(): void {
         this.dropHighlight.visible(false);
         this.sliceBadge.visible(false);
-        this.plateTitle.text("Your order plate");
+        // Restore the subtraction label after each drop.
+        this.plateTitle.text(this.subtractionOrder ? "Slice return plate" : "Your order plate");
         this.plateTitle.fill("#4A2E1F");
     }
 
@@ -381,7 +425,8 @@ export class PlateView {
         group.on("dragmove", () => {
             const pointer = this.stage.getPointerPosition();
             if (!pointer) return;
-            this.updateDropHighlight(index, pointer.x, pointer.y);
+            // Convert display coordinates back to the original canvas layout.
+            this.updateDropHighlight(index, pointer.x / this.stage.scaleX(), pointer.y / this.stage.scaleY());
         });
 
         group.on("dragend", () => {
@@ -391,9 +436,16 @@ export class PlateView {
             if (!controller) return;
 
             const pointer = this.stage.getPointerPosition();
-            if (!pointer) return;
+            if (!pointer) {
+                // Recover slices released outside the canvas.
+                controller.sliceDroppedOutside(index, denominator);
+                return;
+            }
 
-            if (this.isOverPlate(pointer.x, pointer.y)) {
+            // Use logical coordinates when the canvas is scaled.
+            const x = pointer.x / this.stage.scaleX(); // Logical pointer position.
+            const y = pointer.y / this.stage.scaleY(); // Logical pointer position.
+            if (this.isOverPlate(x, y)) {
                 controller.sliceDroppedOnPlate(index, denominator);
             } else {
                 controller.sliceDroppedOutside(index, denominator);
@@ -403,10 +455,11 @@ export class PlateView {
         return group;
     }
 
-    public drawOrder(denominator: number): void {
+    public drawOrder(denominator: number, sliceCount = denominator): void {
         this.layer.destroyChildren();
         this.slices = [];
-        for (let i = 0; i < denominator; i++) {
+        // Subtraction exposes only slices from the starting amount.
+        for (let i = 0; i < sliceCount; i++) {
             const slice = this.makeSlice(this.trayX, this.trayY, this.radius, denominator, i);
             this.slices.push(slice);
             this.layer.add(slice);
@@ -414,13 +467,21 @@ export class PlateView {
     }
 
     public showFraction(slices: number, denominator: number): void {
-        this.numeratorText.text(String(slices));
+        // The order plate counts taken-away slices; subtraction displays what remains.
+        const remaining = this.subtractionOrder
+            ? this.subtractionOrder.initialNumerator - slices : slices; // Displayed amount.
+        this.numeratorText.text(String(remaining));
         this.denominatorText.text(String(denominator));
         this.plateBottomText.text(`${slices} of ${denominator} slices placed`);
+        if (this.subtractionOrder) {
+            this.trayBottomText.text(`${remaining} of ${denominator} slices left in the tray`);
+        }
     }
 
     public showTrayText(denominator: number): void {
-        this.trayBottomText.text(`Each slice is 1 ${denomToWord(denominator)}`);
+        this.trayBottomText.text(this.subtractionOrder
+            ? `${this.subtractionOrder.initialNumerator} of ${denominator} slices left in the tray`
+            : `Each slice is 1 ${denomToWord(denominator)}`);
     }
 
     // Returns the angle equal to target (mod 360) that is closest to current,
