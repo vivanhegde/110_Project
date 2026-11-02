@@ -102,7 +102,7 @@ As a student, I want to complete a level containing a few orders so that I can s
 - Each level contains two or five or more orders.
 - The header shows the level number, "Order x of 5" or "Order x of 2" etc, a progress bar, and the current score.
 - The game records whether each order was correct on the first Check Order.
-- Students pass by getting at least y = x - 1 amount of orders correct on the first try. y = the total number of orders
+- Students pass by getting at least x - 1 amount of orders correct on the first try. x = the total number of orders
 - Students who pass see a results screen with their total score and solved equations, plus a Play Again button.
 - Students who do not pass see a results screen with their score and a Retry Level button.
 - Play Again and Retry Level reset the score and progress to Order 1.
