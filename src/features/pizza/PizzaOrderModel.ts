@@ -15,19 +15,43 @@ export class PizzaOrderModel {
     ) {
       throw new Error("Invalid pizza order");
     }
+
+    // If addition operands are provided, require both.
+    const hasFirst = order.firstNumerator !== undefined;
+    const hasSecond = order.secondNumerator !== undefined;
+
+    if (hasFirst !== hasSecond) {
+      throw new Error("Both fractions must be provided");
+    }
+
+    //If both addition operands are provided, validate them
+    if (hasFirst && hasSecond) {
+      const first = order.firstNumerator!;
+      const second = order.secondNumerator!;
+
+      if (
+        !Number.isInteger(first) ||
+        !Number.isInteger(second) ||
+        first < 0 ||
+        second < 0 ||
+        first + second !== order.numerator
+      ) {
+        throw new Error("Invalid fraction addition");
+      }
+    }
+
     //If order is valid, set the order
-    this.order = order;
-    
+    this.order = { ...order };
   }
 
   public getOrder(): PizzaOrder {
-    return this.order;
+    return { ...this.order };
   }
   
   public selectSlice(count: number): void {
     //Invalid slice selection, throw an error
     if (
-        !Number.isInteger(this.selectedSlices) ||
+        !Number.isInteger(count) ||
         count < 0 ||
         count > this.order.denominator ||
         !Number.isInteger(count)

@@ -1,0 +1,337 @@
+
+/* Main game background */
+.addition-game {
+  background: #fff7e9;
+  color: #403026;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  padding-bottom: 32px;
+}
+
+.addition-game * {
+  box-sizing: border-box;
+}
+
+/* Header */
+.addition-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 40px;
+  background: #fffdf8;
+  border-bottom: 2px solid #eadcc9;
+}
+
+.addition-logo {
+  text-decoration: none;
+  color: #d84b32;
+  font-size: 23px;
+  font-weight: bold;
+}
+
+.addition-progress {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.addition-dots {
+  display: flex;
+  gap: 5px;
+}
+
+.addition-dots span {
+  width: 22px;
+  height: 9px;
+  border-radius: 8px;
+  background: #e6d9c8;
+}
+
+.addition-dots span.active {
+  background: #e35d3e;
+}
+
+.addition-score {
+  background: #ffe6a0;
+  border-radius: 15px;
+  padding: 12px 18px;
+}
+
+/* Heading */
+.addition-heading {
+  max-width: 1250px;
+  margin: 28px auto;
+  padding: 0 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.addition-heading h1 {
+  margin: 0 0 8px;
+  font-size: 30px;
+}
+
+.addition-heading p {
+  color: #837264;
+  margin: 0;
+}
+
+.addition-level-label {
+  background: #ffe7df;
+  border-radius: 20px;
+  padding: 12px 18px;
+  color: #b74933;
+}
+
+/* Two-column gameplay layout */
+.addition-layout {
+  max-width: 1250px;
+  margin: auto;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 20px;
+}
+
+.addition-order-card,
+.addition-play-card {
+  background: #fffdf8;
+  border: 2px solid #edddc8;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.addition-order-card {
+  padding: 24px;
+}
+
+.addition-order-card h2 {
+  color: #dc5437;
+  font-size: 16px;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.addition-order-card h3 {
+  font-size: 14px;
+  color: #847262;
+  text-align: center;
+  margin: 24px 0 12px;
+}
+
+.addition-customer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 24px;
+  font-size: 20px;
+}
+
+.addition-request {
+  margin-top: 22px;
+  font-weight: bold;
+  line-height: 1.6;
+}
+
+.addition-order-card hr {
+  border: 0;
+  border-top: 1px solid #eadcc9;
+  margin-top: 24px;
+}
+
+/* Fraction display */
+.addition-equation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.addition-fraction {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.addition-fraction span:first-child {
+  border-bottom: 2px solid currentColor;
+  padding: 0 7px 5px;
+}
+
+.addition-fraction span:last-child {
+  padding-top: 5px;
+}
+
+.addition-order-note {
+  background: #ffebad;
+  padding: 13px;
+  border-radius: 12px;
+  text-align: center;
+  margin-top: 30px;
+}
+
+/* Pizza interaction area */
+.addition-instruction {
+  background: white;
+  margin: 0;
+  padding: 20px;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.addition-plate {
+  background: #f6e6d1;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Keep Charlie's PlateView canvas interactive. */
+.addition-plate canvas {
+  max-width: 100%;
+}
+
+/* Controls */
+.addition-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: #fffdf8;
+}
+
+.addition-selected {
+  font-size: 18px;
+}
+
+.addition-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.addition-primary,
+.addition-secondary {
+  padding: 13px 22px;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.addition-primary {
+  background: #dc5136;
+  color: white;
+  border: none;
+}
+
+.addition-primary:hover {
+  background: #bd402a;
+}
+
+.addition-secondary {
+  background: #fff4e5;
+  border: 2px solid #ead7be;
+  color: #674b36;
+}
+
+/* Bottom feedback banner */
+.addition-message {
+  max-width: 1202px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #fffdf8;
+  border: 2px solid #e8d8c1;
+  border-radius: 16px;
+  line-height: 1.6;
+}
+
+.addition-message[data-result="correct"] {
+  background: #e0f2dc;
+  border-color: #acd4a6;
+}
+
+.addition-message[data-result="incorrect"] {
+  background: #fff0c7;
+  border-color: #efd08a;
+}
+
+/* Level completion screen */
+.addition-completion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 20px;
+  padding: 50px 24px;
+}
+
+.addition-completion h1 {
+  color: #dc5136;
+  font-size: 36px;
+}
+
+.addition-final-score {
+  background: white;
+  padding: 28px 60px;
+  border: 2px solid #ead7be;
+  border-radius: 18px;
+}
+
+.addition-final-score h2 {
+  font-size: 48px;
+  margin: 10px 0;
+  color: #dc5136;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* Responsive layout */
+@media (max-width: 800px) {
+  .addition-header {
+    flex-wrap: wrap;
+    padding: 16px;
+  }
+
+  .addition-progress {
+    order: 3;
+    width: 100%;
+  }
+
+  .addition-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .addition-heading {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .addition-heading h1 {
+    font-size: 24px;
+  }
+
+  .addition-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .addition-buttons {
+    flex-wrap: wrap;
+  }
+
+  .addition-buttons button {
+    flex: 1;
+  }
+
+  .addition-message {
+    margin: 20px 24px;
+  }
+}
