@@ -6,6 +6,8 @@ import { PlateController } from "./features/plate/PlateController";
 import { startSubtractionGame } from "./features/pizza/SubtractionGame";
 import { startAdditionGame } from "./features/pizza/AdditionGame";
 
+import { startGame } from "./features/game/GameScreen";
+
 const app = document.getElementById("app");
 
 if (!app) {
@@ -23,8 +25,8 @@ if (mode === "addition") {
   //Preserves the existing subtraction game
   startSubtractionGame(app);
 
-} else {
-  //Keep original plate demo as the default
+} else if (mode === "demo") {
+  // Keep the original plate demo on ?mode=demo
   app.innerHTML = `
     <h1>Fraction Food Truck</h1>
     <p>Welcome to the pizza fraction game!</p>
@@ -44,6 +46,13 @@ if (mode === "addition") {
     <div id="plate"></div>
   `;
 
+}
+
+//Default to the original game if no mode is specified
+else {
+  startGame(app);
+}
+
   const denominator = 8;
 
   const view = new PlateView("plate");
@@ -56,4 +65,3 @@ if (mode === "addition") {
 
   controller.startOrder(denominator);
   view.setCustomerName("Joe");
-}
