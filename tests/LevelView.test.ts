@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { describe, it, expect } from "vitest";
 import { LevelView } from "../src/features/level/LevelView";
 import type { LevelProgress, LevelResult } from "../src/features/level/types";

@@ -1,5 +1,6 @@
 
-import type { PizzaOrder, AnswerResult } from "./types";
+import type { PizzaOrder, AnswerResult, SubtractionOrder } from "./types";
+import type { Feedback } from "../feedback/types";
 
 export class PizzaOrderView {
   private root: HTMLElement;
@@ -152,10 +153,19 @@ export class PizzaOrderView {
   }
 
   //Displays the current customer's order
+ 
   public showOrder(order: PizzaOrder): void {
     const name = order.customerName ?? "Customer";
-    const first = order.firstNumerator ?? order.numerator;
-    const second = order.secondNumerator ?? 0;
+    const subtract = "initialNumerator" in order;
+
+    //Determine the first and second numerators based on whether the order is a subtraction or addition order
+    const first = subtract
+      ? (order as SubtractionOrder).initialNumerator
+      : (order.firstNumerator ?? order.numerator);
+
+    const second = subtract
+      ? (order as SubtractionOrder).subtractNumerator
+      : (order.secondNumerator ?? 0);
 
     this.element("addition-heading").textContent =
       `Let's make ${name}'s pizza!`;
@@ -164,24 +174,45 @@ export class PizzaOrderView {
 
     this.element("addition-request").textContent =
       order.request ??
-      `I'd like ${first}/${order.denominator} plus ` +
-      `${second}/${order.denominator} of a pizza!`;
+      (subtract
+        ? `I have ${first}/${order.denominator}. Please take away ${second}/${order.denominator}.`
+        : `I'd like ${first}/${order.denominator} plus ${second}/${order.denominator} of a pizza!`);
 
     this.element("addition-instruction").textContent =
-      `Drag slices onto the plate to make ${name}'s order.`;
+      subtract
+        ? `Move ${second} slices to the return plate for ${name}.`
+        : `Drag slices onto the plate to make ${name}'s order.`;
 
     const equation = this.element("addition-equation");
+
     equation.replaceChildren(
       this.fraction(first, order.denominator),
-      document.createTextNode("+"),
+      document.createTextNode(subtract ? "−" : "+"),
       this.fraction(second, order.denominator)
     );
 
+    //Update the order note and level label based on whether the order is a subtraction or addition order
     this.element("addition-order-note").textContent =
-      "＋ Put slices together";
+      subtract
+        ? "− Take slices away"
+        : "＋ Put slices together";
 
-    this.showSelectedSlices(0, order.denominator);
+    const label = this.root.querySelector<HTMLElement>(
+      ".addition-level-label"
+    );
+
+    if (label) {
+      label.textContent = subtract
+        ? "Subtracting fractions"
+        : "Adding fractions";
+    }
+
+    this.showSelectedSlices(
+      subtract ? first : 0,
+      order.denominator
+    );
   }
+
 
   //Displays which of the five orders is active
   public showProgress(
@@ -354,4 +385,51 @@ export class PizzaOrderView {
     this.element("addition-replay")
       .addEventListener("click", callback);
   }
+
+
+  //Displays feedback from the shared FeedbackController
+  public showFeedback(
+    feedback: Feedback,
+    order: PizzaOrder,
+    selected: number
+  ): void {
+    this.showMessage(
+      `${feedback.title} ${feedback.message}`,
+      feedback.type === "correct" ? "correct" : "incorrect"
+    );
+
+    if (feedback.type === "correct") {
+      this.element("addition-order-note").textContent =
+        "✓ Order served!";
+
+      const equation = this.element("addition-equation");
+
+      equation.append(
+        document.createTextNode("="),
+        this.fraction(
+          order.numerator,
+          order.denominator
+        )
+      );
+    }
+
+    this.showSelectedSlices(
+      selected,
+      order.denominator
+    );
+  }
+
+  //Shows the action chosen by the FeedbackController
+  public showAction(label: string): void {
+    this.element("addition-check").hidden = true;
+    this.element("addition-hint").hidden = true;
+
+    const action = this.element<HTMLButtonElement>(
+      "addition-next"
+    );
+
+    action.textContent = label;
+    action.hidden = false;
+  }
+
 }
