@@ -1,4 +1,3 @@
-
 import { PizzaOrderModel } from "../pizza/PizzaOrderModel";
 import { PizzaOrderController } from "../pizza/PizzaOrderController";
 import { PizzaOrderView } from "../pizza/PizzaOrderView";
@@ -17,6 +16,11 @@ import { FeedbackController } from "../feedback/FeedbackController";
 import { WorkedExampleModel } from "../workedExamples/WorkedExampleModel";
 import { WorkedExampleController } from "../workedExamples/WorkedExampleController";
 import { WorkedExampleView } from "../workedExamples/WorkedExampleView";
+
+
+import { renderExplanation } from "../feedback/ExplanationView";
+import "../pizza/SubtractionGame.css";
+
 
 import type {
   PizzaOrder,
@@ -134,6 +138,18 @@ export function startGame(app: HTMLElement): void {
   heading.before(content);
   content.append(heading, layout, message);
 
+
+  const explanationPanel = document.createElement("section");
+  explanationPanel.className = "unified-explanation";
+  explanationPanel.setAttribute(
+    "aria-label",
+    "Step-by-step explanation"
+  );
+  explanationPanel.hidden = true;
+
+  content.append(explanationPanel);
+
+
   //Level results container.
   const results = document.createElement("section");
   results.className = "unified-results";
@@ -238,6 +254,7 @@ export function startGame(app: HTMLElement): void {
 
     locked = false;
     feedback.startNewOrder();
+    renderExplanation(explanationPanel);
     currentAddition = null;
 
     //Subtraction and addition share the same plate
@@ -305,6 +322,11 @@ export function startGame(app: HTMLElement): void {
       result
     );
 
+    renderExplanation(
+      explanationPanel,
+      response.explanation
+    );
+
     orderView.showSelectedSlices(
       answer,
       order.denominator
@@ -332,6 +354,7 @@ export function startGame(app: HTMLElement): void {
     if (response.type !== "correct") {
       //Incorrect answer -> resume the same order
       feedback.closeFeedback();
+      renderExplanation(explanationPanel);
 
       locked = false;
       plateView.setInteractionEnabled(true);
