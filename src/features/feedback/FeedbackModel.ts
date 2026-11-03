@@ -1,3 +1,4 @@
+import { createExplanation } from "./Explanation";
 import type { PizzaOrder, AnswerResult } from "../pizza/types";
 import type { Feedback } from "./types";
 
@@ -41,6 +42,7 @@ export class FeedbackModel {
         : `Not quite — you made ${made}. The order needs ${needed}. Take away ${difference} ${sliceWord}. Your score stays the same.`,
       pointsEarned: 0,
       actionLabel: "Try Again",
+      ...(this.incorrectAttempts >= 2 ? { explanation: createExplanation(order) } : {}),
     };
     return this.currentFeedback;
   }
