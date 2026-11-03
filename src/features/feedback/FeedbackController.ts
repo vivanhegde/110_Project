@@ -1,4 +1,4 @@
-import type { FeedbackDisplay } from "./FeedbackView";
+import type { FeedbackDisplay } from "./types";
 import { FeedbackModel } from "./FeedbackModel";
 import type { PizzaOrder, AnswerResult } from "../pizza/types";
 import type { Feedback } from "./types";

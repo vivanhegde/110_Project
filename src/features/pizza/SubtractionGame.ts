@@ -1,4 +1,4 @@
-import { FeedbackView } from "../feedback/FeedbackView";
+import { SubtractionFeedbackView } from "../feedback/SubtractionFeedbackView";
 // Import the existing plate components.
 import { PlateModel } from "../plate/PlateModel";
 import { PlateController } from "../plate/PlateController";
@@ -62,7 +62,7 @@ export function startSubtractionGame(app: HTMLElement): void {
   const view = new PlateView("plate"); // Shared pizza canvas.
   const plate = new PlateModel(order.denominator); // Authoritative slice state.
   const controller = new PlateController(); // Shared drag controller.
-  const feedback = new FeedbackController(new FeedbackModel(), new FeedbackView(app)); // Shared feedback state.
+  const feedback = new FeedbackController(new FeedbackModel(), new SubtractionFeedbackView(app)); // Shared feedback state.
   const checkButton = element<HTMLButtonElement>("#check-order"); // Answer submission.
   const actionButton = element<HTMLButtonElement>("#feedback-action"); // Retry or next action.
 
