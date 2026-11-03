@@ -9,6 +9,7 @@ export class PlateController {
     private model : PlateModel | null = null;
     private view : PlateView | null = null;
     private subtractionModel: SubtractionOrderModel | null = null; // Active subtraction order.
+    private onSliceCountChanged: (() => void) | null = null;
 
     public constructor() {}
 
@@ -71,6 +72,7 @@ export class PlateController {
 
         view.snapToPlateSlot(sliceId, slotIndex, denominator);
         view.showFraction(model.getSlicesOnPlate(), denominator);
+        this.onSliceCountChanged?.();
     }
 
     public sliceDroppedOutside(sliceId: number, denominator: number): void {
@@ -90,6 +92,7 @@ export class PlateController {
         // a slice's tray position is its own id
         view.snapToTraySlot(sliceId, sliceId, denominator);
         view.showFraction(model.getSlicesOnPlate(), denominator);
+        this.onSliceCountChanged?.();
     }
 
     // Check the same slice state that is shown on screen.
@@ -110,6 +113,13 @@ export class PlateController {
 
     public isSliceOnPlate(sliceId: number): boolean {
         return this.model == null ? false : this.model.isOnPlate(sliceId);
+    }
+
+    //Register a callback to be called when the slice count changes
+    public setOnSliceCountChanged(
+        callback: () => void
+    ): void {
+        this.onSliceCountChanged = callback;
     }
 
 }

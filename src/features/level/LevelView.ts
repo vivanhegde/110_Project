@@ -161,6 +161,16 @@ export class LevelView
       return start + " - " + takeAway + " = " + answer;
     }
 
+    //Only an AdditionOrder has firstNumerator and secondNumerator
+    if (order.firstNumerator !== undefined && order.secondNumerator !== undefined) {
+      return (
+        `${order.firstNumerator}/${order.denominator} + ` +
+        `${order.secondNumerator}/${order.denominator} = ` +
+        `${answer}`
+      );
+    }
+
+    //If we don't know what kind of order it is, just show the answer
     return answer;
   }
 }

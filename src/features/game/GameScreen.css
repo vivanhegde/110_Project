@@ -1,0 +1,69 @@
+.unified-progress {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.unified-progress .level-number,
+.unified-progress .order-count {
+  font-weight: 700;
+}
+
+.unified-progress .score {
+  background: #ffe6a0;
+  padding: 10px 15px;
+  border-radius: 14px;
+}
+
+.unified-progress .progress-bar {
+  width: 130px;
+  height: 12px;
+  border-radius: 12px;
+  background: #eadcc9;
+  overflow: hidden;
+}
+
+.unified-progress .progress-fill {
+  height: 100%;
+  background: #dc5136;
+}
+
+.unified-results,
+.unified-example {
+  max-width: 850px;
+  margin: 34px auto;
+  padding: 32px;
+  background: #fffdf8;
+  border: 2px solid #edddc8;
+  border-radius: 18px;
+}
+
+.unified-results h2,
+.unified-example h2 {
+  color: #dc5136;
+}
+
+.unified-results button,
+.unified-example button {
+  margin: 10px 8px 0 0;
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 20px;
+  background: #dc5136;
+  color: white;
+  cursor: pointer;
+}
+
+.unified-example .example-equation {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.unified-results .results-orders {
+  line-height: 1.9;
+}
+
+[hidden] {
+  display: none !important;
+}
