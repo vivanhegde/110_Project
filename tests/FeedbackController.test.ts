@@ -1,10 +1,29 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { FeedbackModel } from "../src/features/feedback/FeedbackModel";
 import { FeedbackController } from "../src/features/feedback/FeedbackController";
 import { PizzaOrderModel } from "../src/features/pizza/PizzaOrderModel";
 import { PizzaOrderController } from "../src/features/pizza/PizzaOrderController";
 
 describe("FeedbackController", () => {
+    it("coordinates the model and view for submission, retry, and a new order", () => {
+        const model = new FeedbackModel();
+        const view = { show: vi.fn(), clear: vi.fn() };
+        const controller = new FeedbackController(model, view);
+        const order = { numerator: 3, denominator: 8 };
+        const wrong = { correct: false, message: "Try again" };
+        controller.showFeedback(order, 2, wrong);
+        controller.closeFeedback();
+        expect(view.clear).toHaveBeenCalledTimes(1);
+        expect(model.getIncorrectAttempts()).toBe(1);
+        const response = controller.showFeedback(order, 4, wrong);
+        expect(response.explanation).toBeDefined();
+        expect(view.show).toHaveBeenLastCalledWith(response, order);
+        controller.startNewOrder();
+        expect(view.clear).toHaveBeenCalledTimes(2);
+        expect(model.getCurrentFeedback()).toBeNull();
+        expect(model.getIncorrectAttempts()).toBe(0);
+    });
+
 
     it("should show correct feedback after the pizza controller accepts an answer", () => {
         const pizzaModel = new PizzaOrderModel({ numerator: 3, denominator: 8 });
