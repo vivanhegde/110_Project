@@ -1,0 +1,26 @@
+.recipe-cups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 48px;
+  margin: 12px 0;
+}
+
+.recipe-cup {
+  padding: 10px 12px;
+  border: 2px solid #c0392b;
+  border-radius: 0 0 12px 12px;
+  background: #fff7e8;
+  font-weight: bold;
+}
+
+.recipe-feedback {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #fdecea;
+}
+
+.recipe-feedback[data-result="correct"] {
+  background: #e8f6ec;
+}

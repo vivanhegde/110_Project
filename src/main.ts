@@ -5,6 +5,7 @@ import { PlateController } from "./features/plate/PlateController";
 import { startSubtractionGame } from "./features/pizza/SubtractionGame";
 import { startAdditionGame } from "./features/pizza/AdditionGame";
 import { startGame } from "./features/game/GameScreen";
+import { startRecipeGame } from "./features/recipe/RecipeGame";
 
 const app = document.getElementById("app");
 
@@ -20,6 +21,9 @@ if (mode === "addition") {
 
 } else if (mode === "subtraction") {
   startSubtractionGame(app);
+
+} else if (mode === "recipe") {
+  startRecipeGame(app);
 
 } else if (mode === "demo") {
   app.innerHTML = `
