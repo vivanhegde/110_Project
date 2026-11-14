@@ -77,7 +77,6 @@ export function startSubtractionGame(app: HTMLElement): void {
     if (newOrder) feedback.startNewOrder();
     else feedback.closeFeedback();
     controller.startSubtractionOrder(order);
-    view.setCustomerName(customer);
     view.setInteractionEnabled(true);
     element("#customer-name").textContent = `Order for ${customer}`;
     element("#order-equation").textContent =
