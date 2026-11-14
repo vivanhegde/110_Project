@@ -84,10 +84,6 @@ export function startAdditionGame(app: HTMLElement): void {
     // Reset the plate for the new order.
     plateController.startOrder(order.denominator);
 
-    plateView.setCustomerName(
-      order.customerName ?? "Customer"
-    );
-
     plateView.setInteractionEnabled(true);
 
     // Update the view.

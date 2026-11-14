@@ -3,12 +3,18 @@ import { PlateModel } from "./PlateModel";
 
 // Import subtraction state and answer types.
 import { SubtractionOrderModel } from "../pizza/SubtractionOrderModel";
-import type { SubtractionOrder, AnswerResult } from "../pizza/types";
+import type { SubtractionOrder, AnswerResult, CuttingOrder } from "../pizza/types";
+import { validDenominators, areEquivalent } from "../../shared/fractions";
 
 export class PlateController {
     private model : PlateModel | null = null;
     private view : PlateView | null = null;
     private subtractionModel: SubtractionOrderModel | null = null; // Active subtraction order.
+
+    private cuttingOrder: CuttingOrder | null = null;
+    private cutOptions: number[] = [];
+    private cutIndex = 0;
+
     private onSliceCountChanged: (() => void) | null = null;
 
     public constructor() {}
@@ -21,13 +27,22 @@ export class PlateController {
     }
 
     public startOrder(denominator: number): void {
-        const model = this.model;
         const view = this.view;
-        if (model==null || view == null) return;
+        if (view == null) return;
 
         // Restore the original addition labels when switching modes.
         if (this.subtractionModel) view.setSubtractionMode(null);
         this.subtractionModel = null;
+        this.cuttingOrder = null;
+
+        this.resetPlate(denominator);
+    }
+
+    // Empty the plate and redraw every slice on the tray.
+    private resetPlate(denominator: number): void {
+        const model = this.model;
+        const view = this.view;
+        if (model == null || view == null) return;
 
         model.reset(denominator);
         view.drawOrder(denominator);
@@ -37,6 +52,7 @@ export class PlateController {
 
     // Initialize subtraction on the same plate used for dragging.
     public startSubtractionOrder(order: SubtractionOrder): void {
+        this.cuttingOrder = null;
         const model = this.model; // Shared plate state.
         const view = this.view; // Shared drag view.
         if (!model || !view) return;
@@ -122,4 +138,54 @@ export class PlateController {
         this.onSliceCountChanged = callback;
     }
 
+        // Start an order where the student cuts the pizza into a target denominator.
+    public startCuttingOrder(order: CuttingOrder): void {
+        const view = this.view;
+        if (view == null) return;
+
+        const options = validDenominators(order.numerator, order.denominator);
+        if (!options.includes(order.targetDenominator)) {
+            throw new Error("Target denominator cannot show this fraction: " + order.targetDenominator);
+        }
+
+        if (this.subtractionModel) view.setSubtractionMode(null);
+        this.subtractionModel = null;
+
+        this.cuttingOrder = { ...order };
+        this.cutOptions = options;
+        this.cutIndex = options.indexOf(order.denominator);
+        this.resetPlate(order.denominator);
+    }
+
+    // Move to the next smaller (-1) or larger (+1) valid denominator.
+    // Every slice returns to the tray, cut to the new size.
+    public stepDenominator(direction: 1 | -1): void {
+        if (!this.canStepDenominator(direction)) return;
+
+        this.cutIndex += direction;
+        this.resetPlate(this.cutOptions[this.cutIndex]);
+        this.onSliceCountChanged?.();
+    }
+
+    // Lets the view disable a button at either end of the options.
+    public canStepDenominator(direction: 1 | -1): boolean {
+        if (this.cuttingOrder == null) return false;
+        const next = this.cutIndex + direction;
+        return next >= 0 && next < this.cutOptions.length;
+    }
+
+    // True when the plate shows the same amount using the target denominator.
+    public isAnswerValid(): boolean {
+        const order = this.cuttingOrder;
+        const model = this.model;
+        if (order == null || model == null) return false;
+
+        const denominator = model.getDenominator();
+        return denominator === order.targetDenominator
+            && areEquivalent(model.getSlicesOnPlate(), denominator, order.numerator, order.denominator);
+    }
+    
+    public getDenominator(): number {
+        return this.model == null ? 0 : this.model.getDenominator();
+    }
 }

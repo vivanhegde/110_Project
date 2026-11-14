@@ -11,22 +11,18 @@ export class PlateView {
 
     private readonly radius = 100; //pizza radius
     private readonly trayX = 200;  //tray pos (left)
-    private readonly trayY = 240;
+    private readonly trayY = 180;
     private readonly plateX = 600; //plate pos (right)
-    private readonly plateY = 240;
+    private readonly plateY = 180;
     private readonly plateRadius = 120;
 
     private backgroundLayer: Konva.Layer;
     private labelLayer: Konva.Layer;
     private overlayLayer: Konva.Layer;
 
-    private titleText: Konva.Text;
     private plateTitle: Konva.Text;
     private plateBottomText: Konva.Text;
     private trayBottomText: Konva.Text;
-    private numeratorText: Konva.Text;
-    private denominatorText: Konva.Text;
-    private fractionTitle: Konva.Text; // Addition or subtraction counter label.
     private subtractionOrder: SubtractionOrder | null = null; // Current display mode.
     private readonly resizeObserver: ResizeObserver; // Keep both plates visible in narrow previews.
 
@@ -40,7 +36,7 @@ export class PlateView {
         this.stage = new Konva.Stage({
             container: containerId,
             width: 800,
-            height: 500,
+            height: 360,
         });
 
         this.backgroundLayer = new Konva.Layer();
@@ -55,19 +51,6 @@ export class PlateView {
 
         this.overlayLayer = new Konva.Layer();
         this.stage.add(this.overlayLayer);
-
-        // header title
-        this.titleText = new Konva.Text({
-            x: 30,
-            y: 0,
-            height: 60,
-            verticalAlign: "middle",
-            fontSize: 20,
-            fontStyle: "bold",
-            fill: "#4A2E1F",
-            text: "✋ Drag slices onto the plate to make the order.",
-        });
-        this.labelLayer.add(this.titleText);
 
         // drop highlight around the plate, shown while dragging over it
         this.dropHighlight = new Konva.Group({ visible: false });
@@ -164,49 +147,6 @@ export class PlateView {
         });
         this.labelLayer.add(this.trayBottomText);
 
-        // "On your plate" fraction in the footer
-        const fractionX = 170;
-        const fractionY = 440;
-
-        this.fractionTitle = new Konva.Text({
-            x: 20,
-            y: fractionY,
-            fontSize: 20,
-            fill: "#8A6D5A",
-            text: "On your plate",
-        });
-        this.labelLayer.add(this.fractionTitle);
-
-        this.numeratorText = new Konva.Text({
-            x: fractionX - 15,
-            y: fractionY - 20,
-            width: 40,
-            align: "center",
-            fontSize: 24,
-            fontStyle: "bold",
-            fill: "#4A2E1F",
-            text: "",
-        });
-        this.labelLayer.add(this.numeratorText);
-
-        this.labelLayer.add(new Konva.Line({
-            points: [fractionX - 10, fractionY + 10, fractionX + 20, fractionY + 10],
-            stroke: "#4A2E1F",
-            strokeWidth: 2,
-        }));
-
-        this.denominatorText = new Konva.Text({
-            x: fractionX - 15,
-            y: fractionY + 15,
-            width: 40,
-            align: "center",
-            fontSize: 24,
-            fontStyle: "bold",
-            fill: "#4A2E1F",
-            text: "",
-        });
-        this.labelLayer.add(this.denominatorText);
-
         // "+ 1 slice" badge that follows the pointer over the plate
         this.sliceBadge = new Konva.Label({ visible: false });
         this.sliceBadge.add(new Konva.Tag({
@@ -232,13 +172,13 @@ export class PlateView {
         this.fitToContainer();
     }
 
-    // Fit the original 800 by 500 layout inside the available width.
+    // Fit the original 800 by 360 layout inside the available width.
     private fitToContainer(): void {
         const width = Math.min(800, this.stage.container().clientWidth); // Available width.
         if (width <= 0 || this.stage.width() === width) return;
         const scale = width / 800; // Display scale.
         this.stage.width(width);
-        this.stage.height(500 * scale);
+        this.stage.height(360 * scale);
         this.stage.scale({ x: scale, y: scale });
     }
 
@@ -246,21 +186,9 @@ export class PlateView {
         this.controller = controller;
     }
 
-    public setCustomerName(customerName: string): void {
-        // Describe the correct action for the current operation.
-        this.titleText.text(this.subtractionOrder
-            ? `✋ Drag slices onto the return plate to take them away for ${customerName}.`
-            : `✋ Drag slices onto the plate to make ${customerName}'s order.`);
-    }
-
     // Reuse the existing canvas for subtraction or addition.
     public setSubtractionMode(order: SubtractionOrder | null): void {
         this.subtractionOrder = order ? { ...order } : null;
-        // Reset instructions before applying the current customer's name.
-        this.titleText.text(order
-            ? "✋ Drag slices onto the return plate to take them away."
-            : "✋ Drag slices onto the plate to make the order.");
-        this.fractionTitle.text(order ? "Slices left" : "On your plate");
         this.hideDropHighlight();
     }
 
@@ -273,29 +201,13 @@ export class PlateView {
         const width = this.stage.width();
         const height = this.stage.height();
 
-        const borderWidth = 2;
-        const headerHeight = 60;   // white strip above the brown area
-        const footerHeight = 90;   // white strip below (fraction, buttons)
-
-        // outlined card
-        this.backgroundLayer.add(new Konva.Rect({
-            x: borderWidth / 2,
-            y: borderWidth / 2,
-            width: width - borderWidth,
-            height: height - borderWidth,
-            cornerRadius: 24,
-            fill: "#FFFFFF",
-            stroke: "#EADBC8",
-            strokeWidth: borderWidth,
-        }));
-
         // brown middle area
         this.backgroundLayer.add(new Konva.Rect({
-            x: borderWidth,
-            y: headerHeight,
-            width: width - borderWidth * 2,
-            height: height - headerHeight - footerHeight,
-            fill: "#F5E6D3",
+            x: 0,
+            y: 0,
+            width: width,
+            height: height,
+            fill: "#f6e6d1",
         }));
 
         // tray
@@ -470,8 +382,6 @@ export class PlateView {
         // The order plate counts taken-away slices; subtraction displays what remains.
         const remaining = this.subtractionOrder
             ? this.subtractionOrder.initialNumerator - slices : slices; // Displayed amount.
-        this.numeratorText.text(String(remaining));
-        this.denominatorText.text(String(denominator));
         this.plateBottomText.text(`${slices} of ${denominator} slices placed`);
         if (this.subtractionOrder) {
             this.trayBottomText.text(`${remaining} of ${denominator} slices left in the tray`);
