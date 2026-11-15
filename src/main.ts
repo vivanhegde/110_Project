@@ -7,6 +7,7 @@ import { startAdditionGame } from "./features/pizza/AdditionGame";
 import { startGame } from "./features/game/GameScreen";
 import { startRecipeGame } from "./features/recipe/RecipeGame";
 import { startCuttingGame } from "./features/plate/cuttingGame";
+import { startMapScreen } from "./features/map/MapScreen";
 
 const app = document.getElementById("app");
 
@@ -51,6 +52,13 @@ if (mode === "addition") {
 
   controller.startOrder(denominator);
 
-} else {
+} else if (mode === "game") 
+{
+  //Skip the map and go straight to level 1
   startGame(app);
+
+} else 
+{
+  //Default: open the food truck map (US-9)
+  startMapScreen(app);
 }
