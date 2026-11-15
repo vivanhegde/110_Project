@@ -1,5 +1,5 @@
 // The view uses document.createElement, so these tests need jsdom's fake browser page.
-
+// @vitest-environment jsdom
 import { describe, it, expect } from "vitest";
 import { MapView } from "../src/features/map/MapView";
 import type { LocationStatus } from "../src/features/map/types";

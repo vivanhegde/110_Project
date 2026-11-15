@@ -1,5 +1,5 @@
 // The controller draws through MapView
-
+// @vitest-environment jsdom
 import { describe, it, expect } from "vitest";
 import { MapModel } from "../src/features/map/MapModel";
 import { MapView } from "../src/features/map/MapView";
