@@ -16,7 +16,7 @@ import "./Map.css";
     3. If the student passes, the game calls levelPassed, which unlocks the next place.
     4. "Back to Map" on the results screen draws the map again, now with the new place open.
 
-  The model is created only ONCE here, so progress is kept while playing,
+  The model is created only once, so progress is kept while playing,
   and it's also saved to localStorage so it's kept after closing the game.
 */
 export function startMapScreen(app: HTMLElement): void

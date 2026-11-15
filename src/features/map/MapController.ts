@@ -3,9 +3,9 @@ import { MapView } from "./MapView";
 import type { MapLocation } from "./types";
 
 /*
-  MapController (the "C" in MVC for the map feature)
+  MapController
 
-  The middle person between the map and the rest of the game:
+  The controller between the map and the rest of the game:
     - showMap() asks the model for the latest statuses and tells the view to draw them
     - selectLocation() runs when a place is clicked and starts that level if it's unlocked
     - levelPassed() runs when the student passes a level, so the next place unlocks
@@ -29,8 +29,7 @@ export class MapController
   // Draws the map using the model's current statuses
   public showMap(): void
   {
-    // When a place is clicked, the view calls this arrow function,
-    // which passes the level number on to selectLocation()
+    // When a place is clicked, the view calls this arrow function to pass the level number on to selectLocation()
     this.view.render(this.model.getStatuses(), (levelNumber: number) =>
     {
       this.selectLocation(levelNumber);

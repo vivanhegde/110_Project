@@ -1,5 +1,4 @@
-// @vitest-environment jsdom
-// The controller draws through MapView, so these tests need jsdom too.
+// The controller draws through MapView
 
 import { describe, it, expect } from "vitest";
 import { MapModel } from "../src/features/map/MapModel";
@@ -21,7 +20,7 @@ const threeLocations: MapLocation[] = [
   { levelNumber: 3, name: "City Square", orders: [{ numerator: 5, denominator: 8 }, { numerator: 6, denominator: 8 }] },
 ];
 
-// Builds a controller plus a way to check which level was started.
+// Builds a controller + a way to check which level was started.
 // startedLevel() returns 0 if nothing was started.
 function setup(): { controller: MapController; container: HTMLElement; startedLevel: () => number }
 {

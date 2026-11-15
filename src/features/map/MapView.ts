@@ -1,7 +1,7 @@
 import type { LocationStatus } from "./types";
 
 /*
-  MapView (the "V" in MVC for the map feature)
+  MapView
 
   This class only draws the map screen. It looks like this:
 
@@ -29,7 +29,7 @@ import type { LocationStatus } from "./types";
 export class MapView
 {
   private container: HTMLElement; // where the whole map gets drawn
-  private message: HTMLElement | null = null; // the message line, made in render()
+  private message: HTMLElement | null = null; // the message line
 
   public constructor(container: HTMLElement)
   {
@@ -37,8 +37,8 @@ export class MapView
   }
 
   // Draws the whole map screen.
-  // onSelect is a function the controller gives us. When an unlocked place is clicked,
-  // we call it with that place's level number. The view doesn't start the level itself.
+  // onSelect is a function given by the controller. When an unlocked place is clicked
+  // we call it with that place's level number. The view doesn't start the level.
   public render(statuses: LocationStatus[], onSelect: (levelNumber: number) => void): void
   {
     // Clear whatever was on the screen before (the game or an older map)
@@ -136,8 +136,7 @@ export class MapView
     const button = document.createElement("button");
     button.classList.add("map-location");
 
-    // Pick the state word and icon. Completed is checked first,
-    // because a completed place is also unlocked.
+    // Pick the state word and icon. Completed is checked first, because a completed place is also unlocked.
     let label = "Locked";
     let icon = "🔒";
     if (status.completed)
@@ -172,15 +171,15 @@ export class MapView
     button.appendChild(name);
     button.appendChild(state);
 
-    // Screen readers read this instead of the emoji, for example "Level 2: Seaside Pier (Open)".
-    // The tests also use it to check each button.
+    // Screen readers read the attributes instead of the emoji, for example "Level 2: Seaside Pier (Open)".
+    // Same thing for the tests
     button.setAttribute("aria-label", "Level " + status.levelNumber + ": " + status.name + " (" + label + ")");
 
     if (status.unlocked)
     {
       button.classList.add("unlocked");
 
-      // Only unlocked places listen for clicks
+      // Only unlocked places are clickable
       button.addEventListener("click", function ()
       {
         onSelect(status.levelNumber);

@@ -4,7 +4,7 @@ import type { MapLocation, LocationStatus, SaveStorage } from "./types";
 const SAVE_KEY = "fraction-food-truck-highest-passed-level";
 
 /*
-  MapModel (the "M" in MVC for the map feature)
+  MapModel
 
   This class keeps track of which places on the map are unlocked.
   It does NOT draw anything. Drawing is MapView's job.
@@ -37,7 +37,7 @@ export class MapModel
     }
 
     // Levels have to be numbered 1, 2, 3... in order.
-    // That way level N is always at position N - 1 in the list, which keeps lookups simple.
+    // That way level N is always at position N - 1 in the list for simplicity
     for (let i = 0; i < locations.length; i++)
     {
       if (locations[i].levelNumber !== i + 1)
@@ -46,7 +46,7 @@ export class MapModel
       }
     }
 
-    // Keep our own copy of the list, like LevelModel does with its orders
+    // Copy of the list just like LevelModel does with its orders
     this.locations = [];
     for (let i = 0; i < locations.length; i++)
     {
@@ -55,7 +55,7 @@ export class MapModel
 
     this.storage = storage;
 
-    // Pick up where the student left off last time
+    // Resume where the student left off last time
     this.loadProgress();
   }
 
@@ -106,7 +106,8 @@ export class MapModel
     {
       const location = this.locations[i];
 
-      const status: LocationStatus = {
+      const status: LocationStatus = 
+      {
         levelNumber: location.levelNumber,
         name: location.name,
         unlocked: this.isUnlocked(location.levelNumber),
@@ -119,7 +120,7 @@ export class MapModel
     return statuses;
   }
 
-  // Called when the student PASSES a level. This is what unlocks the next place.
+  // Called when the student passes a level to unlock the next place.
   public completeLevel(levelNumber: number): void
   {
     // You can't pass a level you weren't allowed to play
@@ -136,7 +137,7 @@ export class MapModel
     }
   }
 
-  // Locks everything again except level 1. Handy for testing or for a new student.
+  // Locks everything again except level 1.
   public resetProgress(): void
   {
     this.highestPassedLevel = 0;
