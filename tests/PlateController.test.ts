@@ -77,3 +77,109 @@ describe("PlateController starting an order", () => {
         expect(controller.getSlicesOnPlate()).toBe(0);
     });
 });
+
+// Starts a cutting order: show 3/4 of a pizza using eighths.
+function setupCutting() {
+    const model = new PlateModel(4);
+    const view = makeFakeView();
+    const controller = new PlateController();
+    controller.setModel(model);
+    controller.setView(view as unknown as PlateView);
+    controller.startCuttingOrder({ numerator: 3, denominator: 4, targetDenominator: 8 });
+    return { model, view, controller };
+}
+
+// Puts the first `count` tray slices on the plate.
+function placeSlices(controller: PlateController, count: number) {
+    const denominator = controller.getDenominator();
+    for (let sliceId = 0; sliceId < count; sliceId++) {
+        controller.sliceDroppedOnPlate(sliceId, denominator);
+    }
+}
+
+describe("PlateController cutting orders", () => {
+    it("starts at the order's denominator with an empty plate", () => {
+        const { controller, view } = setupCutting();
+        expect(controller.getDenominator()).toBe(4);
+        expect(controller.getSlicesOnPlate()).toBe(0);
+        expect(view.drawOrder).toHaveBeenLastCalledWith(4);
+    });
+
+    it("throws when the target denominator cannot show the fraction", () => {
+        const controller = new PlateController();
+        controller.setModel(new PlateModel(4));
+        controller.setView(makeFakeView() as unknown as PlateView);
+        expect(() =>
+            controller.startCuttingOrder({ numerator: 3, denominator: 4, targetDenominator: 6 })
+        ).toThrow();
+    });
+
+    it("cuts into smaller slices one valid denominator at a time", () => {
+        const { controller } = setupCutting();
+        controller.stepDenominator(1);
+        expect(controller.getDenominator()).toBe(8);
+        controller.stepDenominator(1);
+        expect(controller.getDenominator()).toBe(12);
+    });
+
+    it("does not cut past the largest or smallest valid denominator", () => {
+        const { controller } = setupCutting();
+        expect(controller.canStepDenominator(-1)).toBe(false);
+        controller.stepDenominator(-1);
+        expect(controller.getDenominator()).toBe(4);
+
+        controller.stepDenominator(1);
+        controller.stepDenominator(1);
+        expect(controller.canStepDenominator(1)).toBe(false);
+        controller.stepDenominator(1);
+        expect(controller.getDenominator()).toBe(12);
+    });
+
+    it("returns every slice to the tray when the pizza is cut", () => {
+        const { controller, view } = setupCutting();
+        placeSlices(controller, 2);
+        controller.stepDenominator(1);
+        expect(controller.getSlicesOnPlate()).toBe(0);
+        expect(view.drawOrder).toHaveBeenLastCalledWith(8);
+    });
+
+    it("notifies the page after a cut", () => {
+        const { controller } = setupCutting();
+        const onChanged = vi.fn();
+        controller.setOnSliceCountChanged(onChanged);
+        controller.stepDenominator(1);
+        expect(onChanged).toHaveBeenCalledTimes(1);
+    });
+
+    it("accepts the right amount using the target denominator", () => {
+        const { controller } = setupCutting();
+        controller.stepDenominator(1);   // eighths
+        placeSlices(controller, 6);
+        expect(controller.isAnswerValid()).toBe(true);
+    });
+
+    it("rejects the wrong amount using the target denominator", () => {
+        const { controller } = setupCutting();
+        controller.stepDenominator(1);   // eighths
+        placeSlices(controller, 5);
+        expect(controller.isAnswerValid()).toBe(false);
+    });
+
+    it("rejects the right amount using a different denominator", () => {
+        const { controller } = setupCutting();
+        placeSlices(controller, 3);      // 3/4, not cut
+        expect(controller.isAnswerValid()).toBe(false);
+
+        controller.stepDenominator(1);
+        controller.stepDenominator(1);   // twelfths
+        placeSlices(controller, 9);      // 9/12
+        expect(controller.isAnswerValid()).toBe(false);
+    });
+
+    it("ends the cutting order when a normal order starts", () => {
+        const { controller } = setupCutting();
+        controller.startOrder(8);
+        expect(controller.canStepDenominator(1)).toBe(false);
+        expect(controller.isAnswerValid()).toBe(false);
+    });
+});

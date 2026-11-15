@@ -44,3 +44,7 @@ export interface UnlikeDenominatorOrder {
 
   resultNumerator: number; // Answer over the common denominator.
 }
+
+export interface CuttingOrder extends PizzaOrder {
+  targetDenominator: number;
+}

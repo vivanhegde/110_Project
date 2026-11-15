@@ -1,0 +1,114 @@
+/* Test page for cutting orders. */
+.cutting-card {
+  max-width: 920px;
+  margin: 0 auto;
+  border: 2px solid #eadbc8;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #fffdf8;
+  font-family: Arial, sans-serif;
+}
+
+.cutting-prompt {
+  background: white;
+  margin: 0;
+  padding: 20px;
+  font-weight: bold;
+  font-size: 16px;
+  color: #4a2e1f;
+}
+
+.cutting-plate {
+  background: #f6e6d1;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.cutting-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+}
+
+.cutting-selected {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 20px;
+  color: #8a6d5a;
+}
+
+.cutting-fraction {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: #4a2e1f;
+}
+
+.cutting-fraction-numerator {
+  border-bottom: 2px solid currentColor;
+  padding: 0 6px 2px;
+}
+
+/* Denominator with a cut button on each side. */
+.cutting-denominator-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 2px;
+}
+
+.cutting-cut {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #c8803f;
+  background: white;
+  color: #c8803f;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.cutting-cut:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.cutting-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cutting-primary {
+  padding: 13px 22px;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 15px;
+  background: #dc5136;
+  color: white;
+  border: none;
+}
+
+.cutting-secondary {
+  padding: 13px 22px;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 15px;
+  background: #fff4e8;
+  color: #4a2e1f;
+  border: 2px solid #eadbc8;
+}
+
+.cutting-result {
+  font-weight: bold;
+  color: #4a2e1f;
+}
