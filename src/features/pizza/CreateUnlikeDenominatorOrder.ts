@@ -1,3 +1,11 @@
+/**
+ * Creates and validates unlike-denominator addition and subtraction orders.
+ * Checks the operation, original fractions, and supported denominators.
+ * Converts both fractions to their least common denominator and calculates
+ * an answer between zero and one whole pizza. Returns the original question,
+ * converted values, and correct answer for other game modules.
+ */
+
 // Import order and denominator types.
 import type {
   UnlikeDenominator,

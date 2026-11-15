@@ -1,3 +1,11 @@
+/**
+ * Generates random unlike-denominator addition and subtraction orders.
+ * Selects different supported denominators and positive numerators while
+ * keeping the result between zero and one whole pizza. Uses shared order
+ * creation to convert and validate the question, and accepts an injected
+ * random source for predictable tests.
+ */
+
 // Import supported denominators and the order type.
 import { unlikeDenominators } from "./types";
 import type { UnlikeDenominatorOrder } from "./types";
