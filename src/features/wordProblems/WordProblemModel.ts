@@ -47,7 +47,7 @@ export class WordProblemModel {
         const answer = this.getAnswerNumerator();
         const action = operation === "addition" ? "added" : "subtracted";
 
-        return `The problem involves ${numerator1}/${denominator} and ${numerator2}/${denominator}. We ${action} the numerators: ${numerator1} ${symbol} ${numerator2} = ${answer}. The denominator remains the same, so the final answer is ${answer}/${denominator}.`;
+        return `The problem involves ${numerator1}/${denominator} and ${numerator2}/${denominator}. ` + `We ${action} the numerators: ${numerator1} ${symbol} ${numerator2} = ${answer}. ` + `The denominator remains the same. ` + `${numerator1}/${denominator} ${symbol} ${numerator2}/${denominator} = ${answer}/${denominator}`;
     }
 
     //Parses a string input in the form of "numerator/denominator" and returns an object with the numerator and denominator as numbers. Returns null if the input is invalid.
