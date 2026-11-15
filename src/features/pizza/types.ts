@@ -21,3 +21,7 @@ export interface SubtractionOrder extends PizzaOrder {
   initialNumerator: number;  // Starting slice count.
   subtractNumerator: number; // Slices to take away.
 }
+
+export interface CuttingOrder extends PizzaOrder {
+  targetDenominator: number;
+}

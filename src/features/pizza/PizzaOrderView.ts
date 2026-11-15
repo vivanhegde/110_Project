@@ -96,8 +96,11 @@ export class PizzaOrderView {
 
             <div class="addition-controls">
               <div class="addition-selected">
-                On your plate:
-                <strong id="addition-count">0/8</strong>
+                <span id="addition-count-label">On your plate</span>
+                <span class="addition-selected-fraction">
+                  <span id="addition-count-numerator">0</span>
+                  <span id="addition-count-denominator">8</span>
+                </span>
               </div>
 
               <div class="addition-buttons">
@@ -247,8 +250,8 @@ export class PizzaOrderView {
     count: number,
     denominator: number
   ): void {
-    this.element("addition-count").textContent =
-      `${count}/${denominator}`;
+    this.element("addition-count-numerator").textContent = String(count);
+    this.element("addition-count-denominator").textContent = String(denominator);
   }
 
   //Display a message to the student

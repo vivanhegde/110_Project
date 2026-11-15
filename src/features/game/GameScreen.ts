@@ -268,10 +268,6 @@ export function startGame(app: HTMLElement): void {
       );
     }
 
-    plateView.setCustomerName(
-      order.customerName ?? "Customer"
-    );
-
     plateView.setInteractionEnabled(true);
 
     // Update the customer and level displays.
