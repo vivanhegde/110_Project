@@ -104,7 +104,17 @@ function buildExample(order: PizzaOrder): WorkedExample {
 }
 
 //Starts the game by initializing the controllers and views and setting up event handlers
-export function startGame(app: HTMLElement): void {
+//levelNumber and orders come from the map location the student picked (US-9).
+//They default to level 1 and LEVEL_ORDERS, so calling startGame(app) still works the old way.
+//onLevelPassed is called when the student passes, so the map can unlock the next place.
+//onBackToMap adds a "Back to Map" button to the results screen.
+export function startGame(
+  app: HTMLElement,
+  levelNumber: number = 1,
+  orders: PizzaOrder[] = LEVEL_ORDERS,
+  onLevelPassed?: (levelNumber: number) => void,
+  onBackToMap?: () => void
+): void {
 
   //Renders the existing Pizza Order interface
   const orderView = new PizzaOrderView(app);
@@ -166,7 +176,7 @@ export function startGame(app: HTMLElement): void {
 
   //Level controls the score and order sequence
   const level = new LevelController(
-    new LevelModel(1, LEVEL_ORDERS)
+    new LevelModel(levelNumber, orders)
   );
 
   const levelView = new LevelView(
@@ -182,7 +192,7 @@ export function startGame(app: HTMLElement): void {
   //Worked example components
   let exampleController = new WorkedExampleController(
     new WorkedExampleModel(
-      buildExample(LEVEL_ORDERS[0])
+      buildExample(orders[0])
     )
   );
 
@@ -378,8 +388,15 @@ export function startGame(app: HTMLElement): void {
 
       levelView.renderHeader(level.getProgress());
 
+      const result = level.getResult();
+
+      //Tell the map the level was passed so the next place unlocks (US-9)
+      if (result.passed && onLevelPassed !== undefined) {
+        onLevelPassed(levelNumber);
+      }
+
       levelView.renderResults(
-        level.getResult(),
+        result,
         () => {
           level.restartLevel();
           levelView.hideResults();
@@ -388,7 +405,8 @@ export function startGame(app: HTMLElement): void {
 
           beginOrder();
           openExample(true);
-        }
+        },
+        onBackToMap
       );
 
       return;

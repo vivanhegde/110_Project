@@ -67,7 +67,8 @@ export class LevelView
   // onRestart is a function the controller gives us. We don't know what it does,
   // we just call it when the button is clicked. This keeps the view from having
   // to know about the model.
-  public renderResults(result: LevelResult, onRestart: () => void): void
+  // onBackToMap is optional (US-9). If it's given, a "Back to Map" button is added too.
+  public renderResults(result: LevelResult, onRestart: () => void, onBackToMap?: () => void): void
   {
     // Clear out anything from last time
     this.results.innerHTML = "";
@@ -133,6 +134,16 @@ export class LevelView
     this.results.appendChild(score);
     this.results.appendChild(list);
     this.results.appendChild(button);
+
+    // Only show "Back to Map" when the game was started from the map
+    if (onBackToMap !== undefined)
+    {
+      const mapButton = document.createElement("button");
+      mapButton.className = "map-button";
+      mapButton.textContent = "Back to Map";
+      mapButton.addEventListener("click", onBackToMap);
+      this.results.appendChild(mapButton);
+    }
 
     // Make sure the results screen is visible
     this.results.hidden = false;
