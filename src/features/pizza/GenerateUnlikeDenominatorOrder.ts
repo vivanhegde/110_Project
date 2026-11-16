@@ -1,7 +1,8 @@
 /**
  * Generates random unlike-denominator addition and subtraction orders.
- * Selects different supported denominators and positive numerators while
- * keeping the result between zero and one whole pizza. Uses shared order
+ * Selects different denominators from two to twelve, using only pairs whose
+ * least common denominator is at most twelve. Chooses positive numerators
+ * while keeping the result between zero and one whole pizza. Uses shared order
  * creation to convert and validate the question, and accepts an injected
  * random source for predictable tests.
  */
@@ -14,6 +15,15 @@ import type { UnlikeDenominatorOrder } from "./types";
 import {
   createUnlikeDenominatorOrder,
 } from "./CreateUnlikeDenominatorOrder";
+
+// Prepare every ordered pair that fits within twelve equal slices.
+const denominatorPairs = unlikeDenominators.flatMap(first =>
+  unlikeDenominators
+    .filter(second => second !== first && unlikeDenominators.some(
+      common => common % first === 0 && common % second === 0,
+    ))
+    .map(second => [first, second] as const),
+);
 
 // Generate a random unlike-denominator order.
 export function generateUnlikeDenominatorOrder(
@@ -35,19 +45,9 @@ export function generateUnlikeDenominatorOrder(
     ? "addition"
     : "subtraction";
 
-  // Choose the first denominator.
-  const firstDenominator = unlikeDenominators[
-    randomInteger(0, unlikeDenominators.length - 1)
-  ]!;
-
-  // Exclude the first denominator from the second choice.
-  const remainingDenominators = unlikeDenominators.filter(
-    value => value !== firstDenominator,
-  );
-
-  // Choose a different second denominator.
-  const secondDenominator = remainingDenominators[
-    randomInteger(0, remainingDenominators.length - 1)
+  // Select a valid pair directly without retrying rejected combinations.
+  const [firstDenominator, secondDenominator] = denominatorPairs[
+    randomInteger(0, denominatorPairs.length - 1)
   ]!;
 
   let firstNumerator: number; // First original numerator.

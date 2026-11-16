@@ -95,7 +95,7 @@ describe("createUnlikeDenominatorOrder", () => {
 
   // Validate both original denominators at runtime.
   it("rejects unsupported denominators", () => {
-    const invalid = 5 as UnlikeDenominator; // Invalid runtime input.
+    const invalid = 13 as UnlikeDenominator; // Invalid runtime input.
 
     expect(() =>
       createUnlikeDenominatorOrder("addition", 1, invalid, 1, 4),
@@ -105,6 +105,30 @@ describe("createUnlikeDenominatorOrder", () => {
       createUnlikeDenominatorOrder("addition", 1, 3, 1, invalid),
     ).toThrow("Unsupported denominator");
   });
+
+  // Support newly available denominators in both operations.
+  it.each([
+    ["addition", 1, 5, 1, 10, 10, 3],
+    ["subtraction", 4, 5, 1, 10, 10, 7],
+    ["addition", 1, 2, 1, 8, 8, 5],
+    ["subtraction", 3, 4, 1, 8, 8, 5],
+    ["addition", 1, 3, 1, 9, 9, 4],
+    ["subtraction", 2, 3, 1, 9, 9, 5],
+  ] as const)("creates %s orders for %i/%i and %i/%i", (operation, n1, d1, n2, d2, common, result) => {
+    const order = createUnlikeDenominatorOrder(operation, n1, d1, n2, d2);
+    expect(order.commonDenominator).toBe(common);
+    expect(order.resultNumerator).toBe(result);
+    expect(order.convertedFirstNumerator * d1).toBe(n1 * common);
+    expect(order.convertedSecondNumerator * d2).toBe(n2 * common);
+  });
+
+  // Reject combinations that exceed the shared pizza's slice limit.
+  it.each([[5, 3], [7, 2], [11, 2], [8, 9]] as const)(
+    "rejects denominators %i and %i requiring more than twelve slices", (first, second) => {
+      expect(() => createUnlikeDenominatorOrder("addition", 1, first, 1, second))
+        .toThrow("No supported common denominator");
+    },
+  );
 
   // Reject invalid first fractions.
   it.each([-1, 0.5, 4, NaN, Infinity])(

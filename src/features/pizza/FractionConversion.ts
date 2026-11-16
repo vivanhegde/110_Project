@@ -1,8 +1,9 @@
 /**
  * Provides fraction conversion for US11 orders.
- * Finds the least common denominator among the supported values and scales
- * numerators without changing the fractions' values. Validates denominators,
- * numerators, and conversion targets before performing the calculation.
+ * Accepts denominators from two to twelve and finds their least common
+ * denominator within that range. Rejects pairs requiring more than twelve
+ * slices and scales numerators without changing the fractions' values.
+ * Validates numerators and conversion targets before calculation.
  */
 
 // Import supported values and their type.

@@ -22,8 +22,8 @@ export interface SubtractionOrder extends PizzaOrder {
   subtractNumerator: number; // Slices to take away.
 }
 
-// Supported denominators in ascending order.
-export const unlikeDenominators = [2, 3, 4, 6, 12] as const;
+// Supported denominators from two to twelve.
+export const unlikeDenominators = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const;
 
 // Derive the type from the supported values.
 export type UnlikeDenominator = (typeof unlikeDenominators)[number];

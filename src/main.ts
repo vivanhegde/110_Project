@@ -7,6 +7,8 @@ import { startAdditionGame } from "./features/pizza/AdditionGame";
 import { startGame } from "./features/game/GameScreen";
 import { startRecipeGame } from "./features/recipe/RecipeGame";
 import { startCuttingGame } from "./features/plate/cuttingGame";
+// Open US11 practice through its preview URL.
+import { startUnlikeDenominatorGame } from "./features/pizza/UnlikeDenominatorGame";
 
 const app = document.getElementById("app");
 
@@ -17,7 +19,11 @@ if (!app) {
 const mode = new URLSearchParams(window.location.search)
   .get("mode");
 
-if (mode === "addition") {
+// Keep the existing home screen and mode links.
+if (new URLSearchParams(window.location.search).get("practice") === "unlike") {
+  startUnlikeDenominatorGame(app);
+
+} else if (mode === "addition") {
   startAdditionGame(app);
 
 } else if (mode === "subtraction") {
