@@ -1,0 +1,60 @@
+.progress-page {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 32px;
+    background: #fffdf8;
+    border: 2px solid #edddc8;
+    border-radius: 18px;
+    font-family: inherit;
+  }
+  
+  .progress-page h1 {
+    color: #dc5136;
+    margin-top: 0;
+  }
+  
+  .progress-page .progress-bar {
+    height: 18px;
+    background: #f1e4d3;
+    border-radius: 9px;
+    overflow: hidden;
+  }
+  
+  .progress-page .progress-fill {
+    height: 100%;
+    background: #e0a100;
+  }
+  
+  .progress-total {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  .progress-levels {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .progress-levels li {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid #edddc8;
+    font-size: 18px;
+  }
+  
+  .progress-level-stars {
+    color: #e0a100;
+    font-size: 22px;
+  }
+  
+  .progress-back {
+    margin-top: 16px;
+    border: 0;
+    border-radius: 10px;
+    padding: 12px 20px;
+    background: #dc5136;
+    color: white;
+    cursor: pointer;
+  }
