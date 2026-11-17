@@ -1,0 +1,100 @@
+\documentclass[10pt,letterpaper,landscape]{article}
+\usepackage[margin=0.45in]{geometry}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[hidelinks]{hyperref}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{9pt}
+\newcommand{\umlbox}[3]{\begin{tabular}{|p{6.7cm}|}\hline
+\centering\textbf{#1}\tabularnewline\hline
+\raggedright #2\tabularnewline\hline
+\raggedright #3\tabularnewline\hline\end{tabular}}
+\begin{document}
+{\Large\bfseries US-14: Equal-Portion Division Practice}\hfill UML class diagram draft
+
+\begin{center}
+\begin{tikzpicture}[
+  every node/.style={font=\small},
+  box/.style={inner sep=0pt,outer sep=0pt,anchor=north},
+  assoc/.style={-{Straight Barb[length=2.2mm]},thick},
+  dependency/.style={-{Straight Barb[length=2.2mm]},dashed,thick},
+  label/.style={fill=white,font=\scriptsize,inner sep=2pt}]
+\node[box] (order) at (0,0) {\umlbox{\guillemotleft interface\guillemotright\ DivisionOrder}{
++ food: string\\
++ totalNumerator: number\\
++ totalDenominator: number\\
++ portionNumerator: number\\
++ portionDenominator: number}{\textit{Data contract; no operations}}};
+\node[box] (model) at (8,0) {\umlbox{DivisionModel}{
+- order: DivisionOrder\\
+- portions: number = 0}{
++ getOrder(): DivisionOrder\\
++ getPortions(): number\\
++ addPortion(): void\\
++ removePortion(): void\\
++ getAnswer(): number\\
++ getHint(): string\\
++ checkAnswer(): DivisionResult}};
+\node[box] (result) at (16,0) {\umlbox{\guillemotleft interface\guillemotright\ DivisionResult}{
++ type: ``correct'' $|$ ``tooFew'' $|$ ``tooMany''\\
++ message: string\\
++ hint: string [0..1]}{\textit{Data contract; no operations}}};
+\node[box] (handlers) at (0,-7) {\umlbox{\guillemotleft interface\guillemotright\ DivisionHandlers}{\textit{Callback contract}}{
++ onAdd(): void\\
++ onRemove(): void\\
++ onCheck(): void\\
++ onHint(): void\\
++ onNext(): void}};
+\node[box] (view) at (8,-7) {\umlbox{DivisionView}{
+- root: HTMLElement\\
+- handlers: DivisionHandlers}{
++ render(order: DivisionOrder,\\
+\hspace*{3mm}portions: number,\\
+\hspace*{3mm}result: DivisionResult $|$ null,\\
+\hspace*{3mm}hint: string $|$ null,\\
+\hspace*{3mm}index: number, total: number): void\\
++ showFinished(onRestart: () $\to$ void): void}};
+\node[box] (controller) at (16,-7) {\umlbox{DivisionController}{
+- model: DivisionModel\\
+- result: DivisionResult $|$ null}{
++ getOrder(): DivisionOrder\\
++ getPortions(): number\\
++ getResult(): DivisionResult $|$ null\\
++ getHint(): string\\
++ addPortion(): void\\
++ removePortion(): void\\
++ checkAnswer(): void}};
+
+\draw[assoc] (model.west |- order.east) -- node[label,above]{1} (order.east);
+\draw[dependency] (model.east |- result.west) -- (result.west);
+\draw[assoc] (controller.north) -- node[label,right]{result [0..1]} (result.south);
+\draw[assoc] (controller.north west) -- node[label,sloped,above]{model [1]} (model.south east);
+\draw[assoc] (view.west |- handlers.east) -- node[label,above]{1} (handlers.east);
+\draw[dependency] (view.north west) -- (3.7,-6.2) -- (3.7,-4.7) -- node[label,above]{render parameter} (order.south);
+\end{tikzpicture}
+\end{center}
+\vfill
+\small
+\texttt{startDivisionGame(app)} creates the model, controller, and view; supplies the callbacks;
+and controls order progression and replay. Constructors and rendering helpers, including the SVG pizza function, are omitted.
+Interfaces are TypeScript data/callback contracts, not parent classes. A retained reference does not assert exclusive ownership.
+
+\newpage
+{\Large\bfseries Architecture writeup}\hfill Draft for review against the final merged feature
+
+\begin{minipage}{0.95\linewidth}
+\normalsize
+The equal-portion division subsystem helps students understand how many equal servings fit into a total amount of pizza. It is worth documenting because fraction arithmetic, the visual grouping of slices, feedback, and order progression must stay consistent while students edit and retry their answers. The diagram shows three implementation classes and three TypeScript interfaces; it describes the real objects and contracts rather than treating the game-starting function as a class. Students enter through the map practice link or \texttt{?mode=division}, read the total and portion size, make or return portions, and check their answer. Incorrect answers preserve the current order and show grouping hints; correct answers lock editing and enable progression. Completing all six orders enables replay.
+
+The subsystem follows the project's MVC structure. \texttt{DivisionModel} stores the portion count, validates orders, and computes total divided by portion as $(a\times d)/(b\times c)$ for fractions $a/b$ and $c/d$. It copies input and returned order objects to protect its state. \texttt{DivisionController} stores feedback, clears it after an edit, and blocks changes after success. \texttt{DivisionView} renders round SVG pizza supply, portion plates, controls, and feedback through a local diagram helper, using callbacks supplied by \texttt{startDivisionGame}; that function manages the active order and resets state between orders. Common-denominator grouping aligns the visual slices and hint explanation. The model and view currently calculate that grouping separately, so future changes must keep them consistent. Orders require positive integer fraction components no larger than twelve and whole portion counts from one to twelve. Division practice uses its own feedback and does not update stars, saved progress, teacher settings, or shared worked examples. Future developers should test both arithmetic and the complete retry/progression flow when extending these constraints; DOM tests alone do not establish browser layout or accessibility behavior.
+\end{minipage}
+
+\vfill
+\small
+Notation references: Donald Bell, \textit{UML basics: An introduction to the Unified Modeling Language},
+\url{https://cs.nyu.edu/~jcf/classes/g22.2440-001_sp06/handouts/UMLBasics.pdf};
+\url{https://taylorial.com/oo/uml/}.
+\end{document}

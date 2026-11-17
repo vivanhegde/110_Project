@@ -86,6 +86,13 @@ export class MapView
     main.appendChild(title);
     main.appendChild(subtitle);
     main.appendChild(board);
+    const divisionLink = document.createElement("a");
+    divisionLink.className = "map-division-link";
+    divisionLink.href = "?mode=division";
+    divisionLink.textContent = "Practice dividing food into equal portions";
+    const practice = document.createElement("p");
+    practice.appendChild(divisionLink);
+    main.appendChild(practice);
     main.appendChild(message);
     page.appendChild(main);
 

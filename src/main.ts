@@ -11,6 +11,7 @@ import { startRecipeGame } from "./features/recipe/RecipeGame";
 import { startCuttingGame } from "./features/plate/cuttingGame";
 import { startMapScreen } from "./features/map/MapScreen";
 import { startProgressScreen } from "./features/progressStars/progressStarsScreen";
+import { startDivisionGame } from "./features/division/DivisionGame";
 
 const app = document.getElementById("app");
 
@@ -34,6 +35,9 @@ if (practice === "unlike") {
 
 } else if (mode === "recipe") {
   startRecipeGame(app);
+
+} else if (mode === "division") {
+  startDivisionGame(app);
 
 } else if (mode === "cutting") {
   startCuttingGame(app);
