@@ -1,0 +1,120 @@
+/* Match PizzaOrderView's layout and PlateView's palette without changing them. */
+.division-page {
+  min-height: 100vh;
+  background: #fff7e9;
+  color: #403026;
+  font-family: Arial, sans-serif;
+  padding-bottom: 32px;
+}
+.division-page * { box-sizing: border-box; }
+.division-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 18px 40px;
+  background: #fffdf8;
+  border-bottom: 2px solid #eadcc9;
+}
+.division-page a, .map-division-link { color: #993622; font-weight: bold; }
+.division-header .division-logo { text-decoration: none; color: #d84b32; font-size: 23px; }
+.division-heading {
+  max-width: 1250px;
+  margin: 28px auto;
+  padding: 0 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+.division-heading h1 { margin: 0 0 8px; font-size: 30px; }
+.division-heading p { margin: 0; color: #837264; }
+.division-operation { background: #ffe7df; border-radius: 20px; padding: 12px 18px; color: #b74933; }
+.division-layout {
+  max-width: 1250px;
+  margin: auto;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+.division-order-card, .division-play-card, .division-card {
+  background: #fffdf8;
+  border: 2px solid #edddc8;
+  border-radius: 18px;
+  min-width: 0;
+  overflow: hidden;
+}
+.division-order-card { padding: 24px; }
+.division-order-card h2 { color: #dc5437; font-size: 16px; letter-spacing: 1px; margin: 0; }
+.division-customer { margin-top: 24px; font-size: 20px; }
+.division-prompt { font-weight: bold; line-height: 1.6; }
+.division-order-card hr { border: 0; border-top: 1px solid #eadcc9; margin-top: 24px; }
+.division-order-card h3 { font-size: 14px; color: #847262; text-align: center; margin: 24px 0 12px; }
+.division-equation { display: flex; justify-content: center; align-items: center; gap: 12px; font-size: 24px; font-weight: bold; }
+.division-fraction { display: inline-flex; flex-direction: column; align-items: center; }
+.division-fraction span:first-child { border-bottom: 2px solid currentColor; padding: 0 7px 5px; }
+.division-fraction span:last-child { padding-top: 5px; }
+.division-order-note { background: #ffebad; padding: 13px; border-radius: 12px; text-align: center; margin-top: 30px; }
+.division-instruction { margin: 0; padding: 20px; font-weight: bold; line-height: 1.5; }
+.division-board { background: #f6e6d1; padding: 20px; }
+.division-board h2 { text-align: center; margin: 0 0 12px; font-size: 18px; color: #4a2e1f; }
+.division-supply, .division-portions { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; }
+.division-pizza { width: 190px; max-width: 100%; margin: 0; text-align: center; }
+.division-pizza-diagram { display: block; width: 100%; height: auto; }
+.division-pizza-diagram .served { opacity: .18; }
+.division-pizza figcaption { color: #674b36; font-size: 15px; }
+.division-pizza-diagram { display: block; width: 100%; height: auto; }
+.division-slice.served { opacity: .18; }
+.division-slice-note { text-align: center; line-height: 1.5; color: #674b36; margin: 16px 0 24px; }
+.division-page button {
+  font: inherit;
+  font-weight: bold;
+  min-height: 44px;
+  padding: 12px 16px;
+  border: 2px solid #ead7be;
+  border-radius: 10px;
+  background: #fff4e5;
+  color: #674b36;
+  cursor: pointer;
+}
+.division-page button:disabled { cursor: default; opacity: .65; }
+.division-page button:focus-visible, .division-page a:focus-visible { outline: 3px solid #205d9e; outline-offset: 3px; }
+.division-page .division-pizza-button { display: block; width: 100%; padding: 0; border: 0; background: transparent; }
+.division-page .division-pizza-button:disabled { opacity: 1; }
+.division-pizza-button:not(:disabled):hover .division-pizza-diagram { filter: drop-shadow(0 2px 3px #a0603a); }
+.division-page .division-portion { width: 145px; max-width: 100%; padding: 6px; background: #fffdf8; font-size: 14px; }
+.division-portion span { display: block; padding: 4px; }
+.division-page .division-overflow { border-color: #b23e28; border-style: dashed; }
+.division-portions { min-height: 60px; align-items: center; }
+.division-count { margin: 0; padding: 20px 20px 0; font-weight: bold; color: #674b36; }
+.division-controls { display: flex; flex-wrap: wrap; gap: 10px; padding: 20px; }
+#division-check, #division-next, #division-restart { background: #dc5136; color: white; border-color: #dc5136; }
+#division-check:hover, #division-next:hover, #division-restart:hover { background: #bd402a; }
+.division-feedback:not(:empty) {
+  max-width: 1202px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #fff0c7;
+  border: 2px solid #efd08a;
+  border-radius: 16px;
+  line-height: 1.6;
+}
+.division-feedback[data-result="correct"] { background: #e0f2dc; border-color: #acd4a6; }
+.division-card { max-width: 900px; margin: 24px auto; padding: 24px; text-align: center; }
+.division-card .division-controls { justify-content: center; }
+@media (max-width: 800px) {
+  .division-header { padding: 16px; gap: 14px; }
+  .division-layout { grid-template-columns: 1fr; padding: 0 16px; }
+  .division-heading { padding: 0 16px; align-items: flex-start; flex-wrap: wrap; }
+  .division-heading h1 { font-size: 24px; }
+  .division-order-card { padding: 20px; }
+  .division-order-note { margin-bottom: 0; }
+  .division-board { padding: 16px; }
+  .division-feedback:not(:empty) { margin: 20px 16px; }
+  .division-controls button { flex: 1 1 130px; }
+  .division-pizza { width: 170px; }
+  .division-card { margin: 16px; }
+}

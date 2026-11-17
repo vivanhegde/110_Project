@@ -95,11 +95,25 @@ The maximum score is 500 points. A student may earn all 500 points but still fai
 
 ## Game Modes
 
+Division practice is available from the food truck map or `/?mode=division`.
+For a standalone entry that loads only the division feature, open `/division.html`.
+Read the total amount of pizza and the required portion size, then use **Make a Portion**
+to divide the food, or click a pizza directly. Round pizza diagrams match the existing
+pizza game; served slices fade in the supply and appear on portion plates.
+Click a portion or **Return a Portion** to undo it. **Check Order** submits the portion
+count and gives a grouping hint after an incorrect answer. **Hint** also offers help
+before submitting. Complete all six orders to finish, or use **Play Again** for new orders.
+
+Problems begin with whole numbers divided by unit fractions and extend to fractions
+divided by unit fractions. All answers are whole portion counts from 1 to 12.
+This standalone practice mode does not change map unlocks or level scores.
+
 | Route | Description |
 |---|---|
 | `/` | Unified game with five orders |
 | `/?mode=addition` | Standalone addition practice |
 | `/?mode=subtraction` | Standalone subtraction practice |
+| `/?mode=division` | Divide pizza into equal portions, with feedback and hints |
 | `/?mode=demo` | Pizza plate demonstration |
 
 ## Project Structure

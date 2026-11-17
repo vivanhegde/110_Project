@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fraction Food Truck — Division Practice</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module">
+      import { startDivisionGame } from "/src/features/division/DivisionGame.ts";
+
+      const app = document.getElementById("app");
+      if (!app) throw new Error("App container not found");
+      startDivisionGame(app);
+    </script>
+  </body>
+</html>
