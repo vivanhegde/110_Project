@@ -2,44 +2,59 @@
 
 ## 1. Overview
 
-Fraction Food Truck is an interactive educational game that teaches fraction addition and subtraction using pizza slices.
+Fraction Food Truck is an interactive educational game designed to help fifth-grade students practice fraction arithmetic through visual, food-themed activities.
 
-The application is written in TypeScript and uses the MVC architecture. Each major feature is organized into separate components so that the team can develop, test, and maintain features independently.
+The application is developed using TypeScript and follows the Model-View-Controller (MVC) architecture. Each major feature is organized into separate components so team members can develop, test, and maintain features independently.
+
+During Sprint 2, the project expanded beyond basic fraction addition and subtraction to include pizza cutting, unlike-denominator problems, recipe scaling, word problems, an interactive level map, and student progress tracking.
 
 ## 2. MVC Architecture
 
+The project follows the MVC design pattern to separate application state, user interface rendering, and interaction logic.
+
 ### Model
 
-Models store information and implement business rules.
+Models store application state, perform calculations, and implement business rules.
 
 Examples include:
-- `PizzaOrderModel`: Stores fraction orders and validates selections.
-- `PlateModel`: Stores the current state of the pizza plate.
-- `FeedbackModel`: Tracks incorrect attempts and produces feedback.
-- `LevelModel`: Stores score, progress, and completion records.
-- `WorkedExampleModel`: Stores instructional examples and their steps.
+
+- `PizzaOrderModel`: Stores fraction orders and validates answers.
+- `PlateModel`: Maintains the current state of the pizza plate.
+- `FeedbackModel`: Tracks incorrect attempts and generates feedback.
+- `LevelModel`: Tracks scoring, progress, and level completion.
+- `WorkedExampleModel`: Stores instructional examples.
+- `MapModel`: Manages level unlocking and saved progression.
+- `RecipeModel`: Tracks ingredient measurements and validates recipe scaling.
 
 ### View
 
-Views display information to players.
+Views display information and allow players to interact with the application.
 
 Examples include:
-- `PizzaOrderView`: Displays customer requests and controls.
-- `PlateView`: Renders and manages graphical pizza elements using Konva.
-- `FeedbackView`: Provides feedback display functionality.
-- `LevelView`: Displays level progress and final results.
-- `WorkedExampleView`: Displays step by step examples.
+
+- `PizzaOrderView`: Displays customer orders and gameplay controls.
+- `PlateView`: Renders interactive pizza slices using Konva.
+- `FeedbackView`: Displays answer feedback.
+- `LevelView`: Displays progress, scores, and results.
+- `WorkedExampleView`: Displays guided instructional examples.
+- `MapView`: Displays available, completed, and locked locations.
+- `RecipeView`: Displays the recipe-scaling interface and measuring cups.
 
 ### Controller
 
-Controllers coordinate application behavior.
+Controllers coordinate user interactions and communicate between models and views.
 
 Examples include:
-- `PizzaOrderController`: Validates submitted pizza-order selections.
-- `PlateController`: Handles pizza slice interactions.
-- `FeedbackController`: Manages feedback and incorrect attempts.
-- `LevelController`: Coordinates scoring and progression.
-- `WorkedExampleController`: Handles navigation through example steps.
+
+- `PizzaOrderController`: Handles pizza-order submissions.
+- `PlateController`: Manages pizza slice interactions.
+- `FeedbackController`: Coordinates feedback and incorrect-attempt tracking.
+- `LevelController`: Manages scoring and level progression.
+- `WorkedExampleController`: Handles instructional navigation.
+- `MapController`: Coordinates level selection and unlocking.
+- `RecipeController`: Processes recipe-scaling interactions.
+
+This separation allows components to be developed independently while maintaining a consistent application structure.
 
 ## 3. Feature Organization
 
@@ -48,12 +63,14 @@ Examples include:
 Location: `src/features/pizza/`
 
 Responsible for:
-- Representing pizza orders.
-- Validating addition and subtraction answers through the appropriate order logic.
-- Displaying customer requests.
-- Providing standalone addition and subtraction gameplay modes.
+
+- Generating and displaying fraction orders.
+- Validating addition and subtraction answers.
+- Supporting interactive pizza gameplay.
+- Providing standalone addition and subtraction practice.
 
 Important files:
+
 - `PizzaOrderModel.ts`
 - `PizzaOrderController.ts`
 - `PizzaOrderView.ts`
@@ -61,32 +78,42 @@ Important files:
 - `AdditionGame.ts`
 - `SubtractionGame.ts`
 
-### Plate Feature
+### Plate and Pizza Cutting Feature
 
 Location: `src/features/plate/`
 
 Responsible for:
-- Maintaining the state of pizza slices.
-- Allowing users to move slices between areas.
-- Updating the fraction displayed on the plate.
-- Providing reusable interaction logic for addition and subtraction.
+
+- Maintaining pizza slice state.
+- Supporting drag-and-drop interactions.
+- Updating the displayed fraction.
+- Providing reusable pizza interactions.
+- Allowing students to cut pizzas into smaller equal slices.
+- Validating equivalent fractions after cutting.
 
 Important files:
+
 - `PlateModel.ts`
 - `PlateController.ts`
 - `PlateView.ts`
+- `cuttingGame.ts`
+
+The pizza cutting feature, introduced during Sprint 2 as US-10, builds on the existing plate system. Students can change the denominator by dividing a pizza into equal slices and then construct an equivalent fraction.
 
 ### Feedback and Explanation Feature
 
 Location: `src/features/feedback/`
 
 Responsible for:
-- Creating correct and incorrect answer feedback.
+
+- Displaying correct and incorrect answer feedback.
 - Tracking incorrect attempts.
-- Providing retry information.
+- Providing retry functionality.
 - Generating detailed explanations after repeated incorrect answers.
+- Supporting educational hints.
 
 Important files:
+
 - `FeedbackModel.ts`
 - `FeedbackController.ts`
 - `FeedbackView.ts`
@@ -99,13 +126,15 @@ Important files:
 Location: `src/features/level/`
 
 Responsible for:
-- Managing the active order.
-- Tracking the total score.
+
+- Managing the current order.
+- Tracking total scores.
 - Recording first-attempt accuracy.
-- Determining whether the level is passed.
-- Displaying level results and supporting restart.
+- Determining level completion.
+- Displaying results and restart options.
 
 Important files:
+
 - `LevelModel.ts`
 - `LevelController.ts`
 - `LevelView.ts`
@@ -115,133 +144,251 @@ Important files:
 Location: `src/features/workedExamples/`
 
 Responsible for:
-- Storing guided example steps.
-- Allowing users to navigate explanations.
-- Supporting introductory instruction and additional help.
+
+- Storing guided instructional examples.
+- Displaying step-by-step explanations.
+- Supporting navigation between instructional steps.
+- Providing additional help when students need it.
 
 Important files:
+
 - `WorkedExampleModel.ts`
 - `WorkedExampleController.ts`
 - `WorkedExampleView.ts`
 
-## 4. Unified Gameplay
+### Map and Level Unlocking Feature 
+
+Location: `src/features/map/`
+
+Responsible for:
+
+- Displaying an interactive food truck map.
+- Representing different locations as levels.
+- Distinguishing completed, unlocked, and locked levels.
+- Unlocking additional locations when the player passes a level.
+- Saving progression using browser local storage.
+
+Important files:
+
+- `MapModel.ts`
+- `MapView.ts`
+- `MapController.ts`
+- `MapScreen.ts`
+
+The map provides a progression interface for the game. Players can select available locations, while locked locations remain inaccessible until the required progression conditions are satisfied.
+
+### Unlike-Denominator Practice 
+
+Location: `src/features/pizza/`
+
+Responsible for:
+
+- Generating addition and subtraction problems with different denominators.
+- Supporting common denominators up to 12.
+- Providing hints for finding common denominators.
+- Displaying equivalent fraction representations.
+- Reusing interactive pizza slices and feedback components.
+- Supporting retries, resets, and additional orders.
+
+Important file:
+
+- `UnlikeDenominatorGame.ts`
+
+This feature reuses existing pizza interactions to teach more advanced fraction operations without requiring an entirely separate interaction system.
+
+The current implementation can be accessed through a standalone practice route. Integrating it into the main level progression system is a future development task.
+
+### Recipe Scaling Feature 
+
+Location: `src/features/recipe/`
+
+Responsible for:
+
+- Displaying recipes with fractional ingredient quantities.
+- Allowing students to scale recipes by whole-number multipliers.
+- Supporting interactive measuring-cup operations.
+- Calculating expected ingredient amounts.
+- Validating answers and generating feedback or hints.
+
+Important files:
+
+- `RecipeModel.ts`
+- `RecipeController.ts`
+- `RecipeView.ts`
+- `RecipeGame.ts`
+
+This feature uses MVC to separate mathematical calculations from visual interactions.
+
+### Fraction Word Problems 
+
+Responsible for:
+
+- Presenting real-world, food-related fraction problems.
+- Supporting addition and subtraction.
+- Validating student responses.
+- Accepting equivalent fractions where appropriate.
+- Providing hints to help students solve problems.
+
+This feature expands the game's educational content by allowing students to apply fraction concepts to written scenarios.
+
+### Progress and Stars Feature 
+
+Responsible for:
+
+- Supporting student progress tracking.
+- Representing earned stars.
+- Providing components for displaying progress and achievement information.
+
+The feature uses MVC components and is intended to complement the existing level results and progression system.
+
+Further integration with the overall gameplay interface remains part of future development.
+
+## 4. Unified Gameplay and Navigation
 
 Location: `src/features/game/`
 
-The unified game brings the individual features together.
-
 Important files:
+
 - `GameScreen.ts`
 - `GameScreen.css`
 - `orders.ts`
 
+`GameScreen.ts` coordinates the core gameplay components, including pizza interactions, answer validation, feedback, and level progression.
+
 `orders.ts` defines the five Level 1 orders.
 
-`GameScreen.ts` acts as the central coordinator. It initializes the feature components, responds to game events, and connects the player's actions to level progression.
+### Application Entry Point
+
+The application entry point is `src/main.ts`.
+
+It determines which screen or practice mode to display based on URL parameters.
+
+Current supported routes include:
+
+| Route | Function |
+|---|---|
+| `/` | Opens the food truck map |
+| `/?mode=game` | Opens Level 1 directly |
+| `/?mode=addition` | Opens addition practice |
+| `/?mode=subtraction` | Opens subtraction practice |
+| `/?mode=cutting` | Opens pizza cutting practice |
+| `/?mode=recipe` | Opens recipe scaling |
+| `/?practice=unlike` | Opens unlike-denominator practice |
+| `/?mode=demo` | Opens the pizza plate demonstration |
+
+Some Sprint 2 features currently operate as standalone practice modes rather than being fully integrated into the main level sequence.
 
 ### Gameplay Flow
 
 ```text
-Start Game
-    |
-    v
+Start Application
+       |
+       v
+Food Truck Map
+       |
+       v
+Select Unlocked Level
+       |
+       v
 Worked Example
-    |
-    v
+       |
+       v
 Display Customer Order
-    |
-    v
-Player Moves Pizza Slices
-    |
-    v
-Check Order
-    |
-    v
+       |
+       v
+Player Interacts with Pizza
+       |
+       v
+Submit Answer
+       |
+       v
 Validate Answer
-    |
-    +-- Incorrect --> Feedback --> Retry
-    |                                 |
-    |                                 v
-    |                         Check Order Again
-    |
-    +-- Correct --> Award Points
-                        |
-                        v
-                 Update Level Progress
-                        |
-                        v
-                   More Orders?
-                    /      \
-                  Yes       No
-                   |         |
-                   v         v
-              Next Order   Results
+       |
+       +-- Incorrect --> Feedback --> Retry
+       |
+       +-- Correct --> Update Score
+                              |
+                              v
+                        Next Order?
+                         /      \
+                       Yes       No
+                        |         |
+                        v         v
+                   Next Order   Results
+                                    |
+                                    v
+                            Evaluate Level Pass
+                                    |
+                                    v
+                            Unlock Next Location
+                                    |
+                                    v
+                               Return to Map
 ```
 
-### Example: Addition Order
-
-For a customer ordering 2/8 + 3/8:
-
-1. The level provides the active order.
-2. `PizzaOrderView` displays the request.
-3. `PlateView` displays draggable pizza slices.
-4. The player places slices on the plate.
-5. `PlateController` provides the selected slice count.
-6. The pizza-order logic validates the answer.
-7. `FeedbackController` produces feedback.
-8. After a correct answer, `LevelController` records progress.
-
-### Example: Subtraction Order
-
-For a customer ordering 6/8 − 2/8:
-
-1. The level provides the subtraction order.
-2. The plate begins with six slices.
-3. The player moves two slices away.
-4. The remaining slice count is checked.
-5. Feedback is generated.
-6. The level advances after a correct answer.
+This diagram represents the intended overall progression architecture. Some navigation and activity integrations are still being completed.
 
 ## 5. Important Design Decisions
 
 ### Separation of Concerns
 
-The MVC architecture separates fraction calculations, user interactions, and display logic. This allows models and controllers to be unit-tested without requiring the full frontend.
+Using MVC keeps mathematical calculations separate from interface rendering and user interaction logic. This allows models and controllers to be tested independently.
 
-### Reusing the Plate Component
+### Reusing Existing Components
 
-The same Plate feature supports both addition and subtraction. This avoids maintaining separate drag-and-drop systems for each type of problem.
+Several Sprint 2 features build on functionality implemented during Sprint 1.
 
-### Centralized Level Progression
+For example, unlike-denominator practice reuses the pizza plate, drag-and-drop interactions, and feedback systems. Pizza cutting also builds on the existing plate architecture.
 
-The Level feature manages the overall score, active order, and completion rules. This helps avoid duplicating scoring and progression logic across gameplay modes.
+This reduces duplicated code and makes it easier to maintain consistent behavior.
 
-### Shared Gameplay Coordinator
+### Modular Feature Development
 
-`GameScreen.ts` connects existing components rather than replacing their individual implementations.
+Each feature is organized into its own module or feature directory.
 
-This makes it easier to integrate features developed by different team members.
+This allows team members to develop different user stories independently and integrate functionality without rewriting the entire application.
+
+### Centralized Gameplay Coordination
+
+`GameScreen.ts` coordinates the main Level 1 experience, while `src/main.ts` handles routing between the map and standalone activity modes.
+
+This separation avoids placing all gameplay functionality inside a single file.
+
+### Persistent Level Progression
+
+The map feature uses browser local storage to preserve unlocked locations.
+
+This allows students to retain their progress when they reload or revisit the game in the same browser.
+
+### Incremental Integration
+
+New features can first be developed and tested independently before being connected to the full level progression system.
+
+This approach helps isolate bugs and allows the team to validate individual components before completing broader integrations.
 
 ## 6. Testing Strategy
 
 The project uses Vitest for automated testing.
 
-Tests are organized in the `tests/` directory.
+Tests are organized primarily in the `tests/` directory.
 
-Important areas covered include:
+Important testing areas include:
 
-- Pizza-order input validation.
-- Correct and incorrect answer handling.
-- Pizza slice selection and plate state.
-- Subtraction calculations.
-- Feedback and incorrect-attempt tracking.
+- Pizza order validation.
+- Addition and subtraction calculations.
+- Plate state and slice interactions.
+- Answer feedback and incorrect-attempt tracking.
 - Level scoring and progression.
 - Worked-example navigation.
-- Cross-feature game logic.
+- Pizza cutting and equivalent fractions.
+- Unlike-denominator operations.
+- Recipe scaling calculations.
+- Map unlocking and progression logic.
+- Cross-feature integration behavior.
 
 ### Unit Testing
 
-Unit tests verify individual model and controller behavior.
+Unit tests verify individual models, controllers, and other application logic.
 
 Run with:
 
@@ -251,7 +398,7 @@ npm test
 
 ### Type Checking
 
-TypeScript catches incompatible types and invalid API usage.
+TypeScript helps detect incompatible data types and incorrect API usage.
 
 Run with:
 
@@ -261,42 +408,41 @@ npx tsc --noEmit
 
 ### Manual Integration Testing
 
-Manual tests are used to evaluate interactions that unit tests cannot fully verify, such as:
+Manual testing is used for interactions that require visual or user-level verification, including:
 
-- Dragging pizza slices.
-- Navigating worked examples.
+- Dragging pizza slices between containers.
+- Cutting pizzas into equal slices.
+- Switching between game modes.
+- Completing fraction orders.
 - Displaying feedback and explanations.
-- Moving between orders.
-- Displaying final level results.
-- Restarting a level.
+- Selecting map locations.
+- Checking level unlocking.
+- Navigating between activities.
+- Verifying responsive and consistent interfaces.
+
+As the application grows, additional integration and browser-based tests will help verify that independently developed features work correctly together.
 
 ## 7. Continuous Integration
 
-GitHub Actions runs automated checks on the repository.
+The project uses GitHub Actions to automatically validate code changes.
 
 Workflow file:
 
 `.github/workflows/ci.yml`
 
-The workflow installs dependencies, runs unit tests, and performs TypeScript type checking.
+The workflow runs on pushes, pull requests, and manual dispatch.
 
-This helps identify integration problems before changes are merged.
+It performs the following steps:
 
-## 8. Future Improvements
+1. Checks out the repository.
+2. Configures Node.js.
+3. Installs dependencies using `npm ci`.
+4. Runs automated unit tests using `npm test`.
+5. Performs TypeScript checking using `npx --no-install tsc --noEmit`.
 
-Potential future development includes:
+This provides a consistent way to identify unit-test failures and TypeScript errors during development.
 
-- Addition and subtraction with different denominators.
-- Additional levels and more difficult problems.
-- Expanded feedback and hint systems.
-- More complete browser-based integration testing.
-- Usability testing with the intended fifth-grade audience.
-- Refactoring the unified coordinator as the application grows.
+CI workflow:
 
-These improvements are outside the current Sprint 1 scope.
+https://github.com/vivanhegde/110_Project/actions
 
-## 9. Conclusion
-
-The project uses MVC to keep fraction logic, interaction behavior, and presentation separate.
-
-By organizing features into independent components and coordinating them through `GameScreen`, the team can develop and test user stories independently while still providing a shared gameplay experience.
