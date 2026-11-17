@@ -4,6 +4,8 @@ import { PlateController } from "./features/plate/PlateController";
 
 import { startSubtractionGame } from "./features/pizza/SubtractionGame";
 import { startAdditionGame } from "./features/pizza/AdditionGame";
+import { startUnlikeDenominatorGame } from "./features/pizza/UnlikeDenominatorGame";
+
 import { startGame } from "./features/game/GameScreen";
 import { startRecipeGame } from "./features/recipe/RecipeGame";
 import { startCuttingGame } from "./features/plate/cuttingGame";
@@ -15,10 +17,15 @@ if (!app) {
   throw new Error("App container not found");
 }
 
-const mode = new URLSearchParams(window.location.search)
-  .get("mode");
+const params = new URLSearchParams(window.location.search);
+const mode = params.get("mode");
+const practice = params.get("practice");
 
-if (mode === "addition") {
+if (practice === "unlike") {
+  // US-11: Unlike denominator practice
+  startUnlikeDenominatorGame(app);
+
+} else if (mode === "addition") {
   startAdditionGame(app);
 
 } else if (mode === "subtraction") {
@@ -52,13 +59,11 @@ if (mode === "addition") {
 
   controller.startOrder(denominator);
 
-} else if (mode === "game") 
-{
-  //Skip the map and go straight to level 1
+} else if (mode === "game") {
+  // Skip the map and go straight to level 1
   startGame(app);
 
-} else 
-{
-  //Default: open the food truck map (US-9)
+} else {
+  // Default: open the food truck map (US-9)
   startMapScreen(app);
 }
