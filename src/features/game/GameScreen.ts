@@ -32,6 +32,11 @@ import type { WorkedExample } from "../workedExamples/types";
 
 import { LEVEL_ORDERS } from "./orders";
 
+import { ProgressModel } from "../progressStars/progressStarsModel";
+import { ProgressStorage } from "../progressStars/progressStorage";
+import { ProgressController } from "../progressStars/progressStarsController";
+import { MAP_LOCATIONS } from "../map/locations";
+
 import "../pizza/AdditionGame.css";
 import "./GameScreen.css";
 
@@ -177,6 +182,12 @@ export function startGame(
   //Level controls the score and order sequence
   const level = new LevelController(
     new LevelModel(levelNumber, orders)
+  );
+
+  //Remembers the stars earned on every level (US-8)
+  const progress = new ProgressController(
+    new ProgressModel(MAP_LOCATIONS.length),
+    new ProgressStorage()
   );
 
   const levelView = new LevelView(
@@ -390,6 +401,9 @@ export function startGame(
 
       const result = level.getResult();
 
+      //Work out and save the stars for this level (US-8)
+      const stars = progress.completeLevel(result);
+
       //Tell the map the level was passed so the next place unlocks (US-9)
       if (result.passed && onLevelPassed !== undefined) {
         onLevelPassed(levelNumber);
@@ -406,7 +420,8 @@ export function startGame(
           beginOrder();
           openExample(true);
         },
-        onBackToMap
+        onBackToMap,
+        stars
       );
 
       return;
