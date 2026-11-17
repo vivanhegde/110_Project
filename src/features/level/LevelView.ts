@@ -1,5 +1,7 @@
 import type { PizzaOrder, SubtractionOrder } from "../pizza/types";
 import type { LevelProgress, LevelResult } from "./types";
+import type { StarCount } from "../progressStars/types";
+import { starsText } from "../progressStars/starsText";
 
 /*
   LevelView
@@ -68,7 +70,7 @@ export class LevelView
   // we just call it when the button is clicked. This keeps the view from having
   // to know about the model.
   // onBackToMap is optional (US-9). If it's given, a "Back to Map" button is added too.
-  public renderResults(result: LevelResult, onRestart: () => void, onBackToMap?: () => void): void
+  public renderResults(result: LevelResult, onRestart: () => void, onBackToMap?: () => void, stars?: StarCount): void
   {
     // Clear out anything from last time
     this.results.innerHTML = "";
@@ -130,6 +132,15 @@ export class LevelView
     button.addEventListener("click", onRestart);
 
     this.results.appendChild(title);
+
+    if (stars !== undefined)
+      {
+        const starLine = document.createElement("p");
+        starLine.className = "results-stars";
+        starLine.textContent = starsText(stars) + " " + stars + " of 3 stars";
+        this.results.appendChild(starLine);
+    }
+    
     this.results.appendChild(summary);
     this.results.appendChild(score);
     this.results.appendChild(list);

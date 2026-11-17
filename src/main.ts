@@ -10,6 +10,7 @@ import { startGame } from "./features/game/GameScreen";
 import { startRecipeGame } from "./features/recipe/RecipeGame";
 import { startCuttingGame } from "./features/plate/cuttingGame";
 import { startMapScreen } from "./features/map/MapScreen";
+import { startProgressScreen } from "./features/progressStars/progressStarsScreen";
 
 const app = document.getElementById("app");
 
@@ -58,6 +59,10 @@ if (practice === "unlike") {
   view.setController(controller);
 
   controller.startOrder(denominator);
+  
+} else if (mode === "progress") {
+  //The progress screen (US-8). Back goes to the map.
+  startProgressScreen(app, () => startMapScreen(app));
 
 } else if (mode === "game") {
   // Skip the map and go straight to level 1
