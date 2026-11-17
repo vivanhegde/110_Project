@@ -1,0 +1,197 @@
+/* Food truck map screen. Colors to match AdditionGame.css and GameScreen.css. */
+
+.map-page {
+  background: #fff7e9;
+  color: #403026;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.map-page * {
+  box-sizing: border-box;
+}
+
+/* Top bar, same look as the game's header */
+.map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 18px 40px;
+  background: #fffdf8;
+  border-bottom: 2px solid #eadcc9;
+}
+
+.map-logo {
+  color: #d84b32;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.map-progress {
+  background: #ffe6a0;
+  padding: 10px 15px;
+  border-radius: 14px;
+  font-weight: 700;
+}
+
+.map-main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 16px;
+  text-align: center;
+}
+
+.map-title {
+  margin: 0 0 8px;
+  font-size: 36px;
+}
+
+.map-subtitle {
+  margin: 0 0 32px;
+  color: #6b5a4c;
+}
+
+/* The light card the road and places sit on */
+.map-board {
+  background: #fffdf8;
+  border: 2px solid #edddc8;
+  border-radius: 18px;
+  padding: 40px 24px;
+}
+
+/* The places sit in a row */
+.map-locations {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* The dashed road behind the places, lined up with the middle of the icons */
+.map-locations::before {
+  content: "";
+  position: absolute;
+  top: 44px;
+  left: 16%;
+  right: 16%;
+  border-top: 6px dashed #e2cdb3;
+}
+
+.map-stop {
+  position: relative; /* keeps each place above the road */
+  flex: 1;
+}
+
+/* Each place is a button with no box, just the icon and text */
+.map-location {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* The big round icon */
+.map-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  border: 4px solid #dc5136;
+  background: #fff4ee;
+  font-size: 38px;
+  margin-bottom: 6px;
+}
+
+.map-level {
+  font-size: 14px;
+  font-weight: 700;
+  color: #8a7564;
+  text-transform: uppercase;
+}
+
+.map-name {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.map-status {
+  padding: 4px 12px;
+  border-radius: 12px;
+  background: #fbe3dd;
+  color: #c0392b;
+  font-size: 14px;
+}
+
+/* Open places grow a little on hover so they feel clickable */
+.map-location.unlocked:hover .map-icon {
+  transform: scale(1.08);
+  background: #ffe1d1;
+}
+
+/* Passed places are green */
+.map-location.completed .map-icon {
+  border-color: #2e8b57;
+  background: #e6f4ea;
+}
+
+.map-location.completed .map-status {
+  background: #e6f4ea;
+  color: #2e8b57;
+}
+
+/* Locked places are gray and can't be clicked */
+.map-location.locked {
+  cursor: not-allowed;
+  color: #9a9a9a;
+}
+
+.map-location.locked .map-icon {
+  border-color: #c8c8c8;
+  background: #eeeeee;
+}
+
+.map-location.locked .map-status {
+  background: #eeeeee;
+  color: #888888;
+}
+
+.map-message {
+  min-height: 24px;
+  margin-top: 20px;
+  color: #c0392b;
+  font-weight: 700;
+}
+
+/* On narrow screens (phones), stack the places and run the road down the middle */
+@media (max-width: 640px) {
+  .map-header {
+    padding: 14px 16px;
+  }
+
+  .map-locations {
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .map-locations::before {
+    top: 44px;
+    bottom: 120px;
+    left: 50%;
+    right: auto;
+    border-top: 0;
+    border-left: 6px dashed #e2cdb3;
+  }
+}

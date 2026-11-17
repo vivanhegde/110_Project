@@ -4,11 +4,12 @@ import { PlateController } from "./features/plate/PlateController";
 
 import { startSubtractionGame } from "./features/pizza/SubtractionGame";
 import { startAdditionGame } from "./features/pizza/AdditionGame";
+import { startUnlikeDenominatorGame } from "./features/pizza/UnlikeDenominatorGame";
+
 import { startGame } from "./features/game/GameScreen";
 import { startRecipeGame } from "./features/recipe/RecipeGame";
 import { startCuttingGame } from "./features/plate/cuttingGame";
-// Open US11 practice through its preview URL.
-import { startUnlikeDenominatorGame } from "./features/pizza/UnlikeDenominatorGame";
+import { startMapScreen } from "./features/map/MapScreen";
 
 const app = document.getElementById("app");
 
@@ -16,11 +17,12 @@ if (!app) {
   throw new Error("App container not found");
 }
 
-const mode = new URLSearchParams(window.location.search)
-  .get("mode");
+const params = new URLSearchParams(window.location.search);
+const mode = params.get("mode");
+const practice = params.get("practice");
 
-// Keep the existing home screen and mode links.
-if (new URLSearchParams(window.location.search).get("practice") === "unlike") {
+if (practice === "unlike") {
+  // US-11: Unlike denominator practice
   startUnlikeDenominatorGame(app);
 
 } else if (mode === "addition") {
@@ -57,6 +59,11 @@ if (new URLSearchParams(window.location.search).get("practice") === "unlike") {
 
   controller.startOrder(denominator);
 
-} else {
+} else if (mode === "game") {
+  // Skip the map and go straight to level 1
   startGame(app);
+
+} else {
+  // Default: open the food truck map (US-9)
+  startMapScreen(app);
 }

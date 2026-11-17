@@ -159,4 +159,34 @@ describe("LevelView", () => {
     expect(results.hidden).toBe(true);
     expect(results.children.length).toBe(0);
   });
+
+  // US-9: when the game was started from the map, the results screen gets a "Back to Map" button
+  it("should show a Back to Map button that calls onBackToMap", () => {
+    const header = document.createElement("div");
+    const results = document.createElement("div");
+    const view = new LevelView(header, results);
+
+    let mapClicks = 0;
+    function onBackToMap(): void
+    {
+      mapClicks = mapClicks + 1;
+    }
+
+    view.renderResults(makeResult(true), function () {}, onBackToMap);
+    const mapButton = results.querySelector(".map-button") as HTMLButtonElement;
+
+    expect(mapButton.textContent).toBe("Back to Map");
+    mapButton.click();
+    expect(mapClicks).toBe(1);
+  });
+
+  // Without onBackToMap (like ?mode=game), there should be no map button
+  it("should not show a Back to Map button when no onBackToMap is given", () => {
+    const header = document.createElement("div");
+    const results = document.createElement("div");
+    const view = new LevelView(header, results);
+    view.renderResults(makeResult(true), function () {});
+
+    expect(results.querySelector(".map-button")).toBeNull();
+  });
 });
