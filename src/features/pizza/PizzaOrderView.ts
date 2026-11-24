@@ -418,7 +418,9 @@ export class PizzaOrderView {
   ): void {
     this.showMessage(
       `${feedback.title} ${feedback.message}`,
-      feedback.type === "correct" ? "correct" : "incorrect"
+      feedback.type === "correct"
+        ? "correct"
+        : "incorrect"
     );
 
     if (feedback.type === "correct") {
@@ -426,6 +428,8 @@ export class PizzaOrderView {
         "✓ Order served!";
 
       const equation = this.element("addition-equation");
+
+      equation.hidden = false;
 
       equation.append(
         document.createTextNode("="),
@@ -436,11 +440,11 @@ export class PizzaOrderView {
       );
     }
 
-    this.showSelectedSlices(
-      selected,
-      order.denominator
-    );
-  }
+  this.showSelectedSlices(
+    selected,
+    order.denominator
+  );
+}
 
   //Shows the action chosen by the FeedbackController
   public showAction(label: string): void {
