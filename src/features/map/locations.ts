@@ -1,6 +1,7 @@
 import type { SubtractionOrder } from "../pizza/types";
 import type { MapLocation } from "./types";
 import { LEVEL_ORDERS } from "../game/orders";
+import { buildWordProblemOrders } from "../wordProblems/wordProblemOrders";
 
 /*
   The places on the food truck map, in the order they unlock.
@@ -32,12 +33,6 @@ export const MAP_LOCATIONS: MapLocation[] = [
   {
     levelNumber: 3,
     name: "City Square",
-    orders: [
-      { customerName: "Ruby", denominator: 8, initialNumerator: 8, subtractNumerator: 3, numerator: 5 } as SubtractionOrder,
-      { customerName: "Owen", denominator: 8, firstNumerator: 2, secondNumerator: 6, numerator: 8 },
-      { customerName: "Ivy", denominator: 8, initialNumerator: 6, subtractNumerator: 5, numerator: 1 } as SubtractionOrder,
-      { customerName: "Jack", denominator: 8, firstNumerator: 3, secondNumerator: 4, numerator: 7 },
-      { customerName: "Nina", denominator: 8, initialNumerator: 8, subtractNumerator: 6, numerator: 2 } as SubtractionOrder,
-    ],
+    orders: buildWordProblemOrders(),
   },
 ];

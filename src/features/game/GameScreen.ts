@@ -21,6 +21,9 @@ import { WorkedExampleView } from "../workedExamples/WorkedExampleView";
 import { renderExplanation } from "../feedback/ExplanationView";
 import "../pizza/SubtractionGame.css";
 
+import { WordProblemModel } from "../wordProblems/WordProblemModel";
+import { WORD_PROBLEMS } from "../wordProblems/problems";
+
 
 import type {
   PizzaOrder,
@@ -226,6 +229,21 @@ export function startGame(
     return level.getCurrentOrder();
   }
 
+  function currentWordProblem(): WordProblemModel | null {
+    if (levelNumber !== 3) {
+      return null;
+    }
+
+    const index =
+      level.getProgress().currentOrderNumber - 1;
+
+    const problem = WORD_PROBLEMS[index];
+
+    return problem
+      ? new WordProblemModel(problem)
+      : null;
+  }
+
   //Updates the fraction counter whenever a slice moves
   plateController.setOnSliceCountChanged(() => {
     if (level.isLevelComplete()) return;
@@ -297,10 +315,14 @@ export function startGame(
 
     levelView.renderHeader(level.getProgress());
 
+    const wordProblem = currentWordProblem();
+
     orderView.showMessage(
-      isSubtraction(order)
-        ? "Drag slices from the starting pizza to the return plate. Check how many remain."
-        : "Move slices from the tray onto your plate, then check your order."
+      wordProblem
+        ? "Read the word problem and use the pizza slices to solve it."
+        : isSubtraction(order)
+          ? "Drag slices from the starting pizza to the return plate. Check how many remain."
+          : "Move slices from the tray onto your plate, then check your order."
     );
 
     orderView.showSelectedSlices(
@@ -338,6 +360,19 @@ export function startGame(
       answer,
       result
     );
+
+    const wordProblem = currentWordProblem();
+
+    if (
+      wordProblem &&
+      !result.correct &&
+      feedback.getIncorrectAttempts() >= 2
+    ) {
+      explanationPanel.textContent =
+        wordProblem.getExplanation();
+
+      explanationPanel.hidden = false;
+    }
 
     renderExplanation(
       explanationPanel,
@@ -418,7 +453,10 @@ export function startGame(
           content.hidden = false;
 
           beginOrder();
-          openExample(true);
+
+          if (levelNumber !== 3) {
+            openExample(true);
+          }
         },
         onBackToMap,
         stars
@@ -434,6 +472,16 @@ export function startGame(
   //Opens a worked example when Hint is clicked
   orderView.onHint(() => {
     if (locked) return;
+
+    const wordProblem = currentWordProblem();
+
+    if (wordProblem) {
+      orderView.showMessage(
+        "Hint: " + wordProblem.getHint()
+      );
+
+      return;
+    }
 
     openExample(false);
   });
