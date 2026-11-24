@@ -310,7 +310,7 @@ export function startGame(
     plateView.setInteractionEnabled(true);
 
     // Update the customer and level displays.
-    orderView.showOrder(order);
+    orderView.showOrder(order, levelNumber === 3);
     orderView.resetControls();
 
     levelView.renderHeader(level.getProgress());
@@ -372,12 +372,12 @@ export function startGame(
         wordProblem.getExplanation();
 
       explanationPanel.hidden = false;
+    } else {
+      renderExplanation(
+        explanationPanel,
+        response.explanation
+      );
     }
-
-    renderExplanation(
-      explanationPanel,
-      response.explanation
-    );
 
     orderView.showSelectedSlices(
       answer,
@@ -486,7 +486,9 @@ export function startGame(
     openExample(false);
   });
 
-  //Starts the first order with an introduction
   beginOrder();
-  openExample(true);
+
+  if (levelNumber !== 3) {
+    openExample(true);
+  }
 }
