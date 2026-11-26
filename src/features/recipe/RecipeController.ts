@@ -31,6 +31,10 @@ export class RecipeController {
     return this.model.getScoops();
   }
 
+  public getMaxScoops(): number {
+    return this.model.getMaxScoops();
+  }
+
   public getIncorrectAttempts(): number {
     return this.model.getIncorrectAttempts();
   }

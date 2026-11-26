@@ -15,8 +15,9 @@ export class MenuView
 
   // Draws the whole menu.
   // totalStars is shown in the top corner so students see how they're doing.
-  // onPlay and onProgress are called when those buttons are clicked.
-  public render(totalStars: number, onPlay: () => void, onProgress: () => void): void
+  // onPlay, onProgress, and onRecipe are called when those buttons are clicked.
+  // onRecipe is optional; the Recipe Practice button only appears when it is given.
+  public render(totalStars: number, onPlay: () => void, onProgress: () => void, onRecipe?: () => void): void
   {
     // Clear whatever was on the screen before
     this.container.innerHTML = "";
@@ -57,6 +58,16 @@ export class MenuView
     progress.addEventListener("click", onProgress);
 
     card.appendChild(play);
+
+    if (onRecipe)
+    {
+      const recipe = document.createElement("button");
+      recipe.className = "menu-button menu-progress menu-recipe";
+      recipe.textContent = "Recipe Practice";
+      recipe.addEventListener("click", onRecipe);
+      card.appendChild(recipe);
+    }
+
     card.appendChild(progress);
 
     main.appendChild(icon);

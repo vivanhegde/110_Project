@@ -24,3 +24,17 @@
 .recipe-feedback[data-result="correct"] {
   background: #e8f6ec;
 }
+.recipe-add,
+.recipe-remove,
+.recipe-check,
+.recipe-next,
+.recipe-play-again,
+.recipe-menu {
+  margin-right: 8px;
+  padding: 6px 14px;
+}
+
+.recipe-add:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

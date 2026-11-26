@@ -56,4 +56,22 @@ describe("MenuView", () => {
 
         expect(container.querySelectorAll(".menu-page").length).toBe(1);
     });
+
+    it("should show a Recipe Practice button that calls onRecipe", () => {
+        const { container, view } = makeView();
+        let opened = false;
+        view.render(0, function () {}, function () {}, function () { opened = true; });
+
+        const recipe = container.querySelector(".menu-recipe") as HTMLButtonElement;
+        expect(recipe.textContent).toBe("Recipe Practice");
+        recipe.click();
+        expect(opened).toBe(true);
+    });
+
+    it("should not show the Recipe Practice button without onRecipe", () => {
+        const { container, view } = makeView();
+        view.render(0, function () {}, function () {});
+
+        expect(container.querySelector(".menu-recipe")).toBeNull();
+    });
 });

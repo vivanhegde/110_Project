@@ -1,10 +1,12 @@
 import type { Recipe, RecipeResult } from "./types";
+import { cupText } from "./RecipeModel";
 
 export interface RecipeHandlers {
   onAdd: () => void;
   onRemove: () => void;
   onCheck: () => void;
   onNext: () => void;
+  onMenu?: () => void;
 }
 
 export class RecipeView {
@@ -18,7 +20,7 @@ export class RecipeView {
   }
 
   //Redraws the whole screen from the current recipe, scoops, and result
-  public render(recipe: Recipe, scoops: number, result: RecipeResult | null, recipeNumber: number, totalRecipes: number): void {
+  public render(recipe: Recipe, scoops: number, maxScoops: number, result: RecipeResult | null, recipeNumber: number, totalRecipes: number): void {
     this.root.innerHTML = "";
     const scoopSize = `1/${recipe.denominator}`;
 
@@ -51,7 +53,7 @@ export class RecipeView {
 
     const total = document.createElement("p");
     total.className = "recipe-total";
-    total.textContent = `You measured: ${scoops}/${recipe.denominator} cup`;
+    total.textContent = "You measured: " + cupText(scoops, recipe.denominator);
     this.root.appendChild(total);
 
     const solved = result !== null && result.type === "correct";
@@ -59,7 +61,9 @@ export class RecipeView {
     if (solved) {
       this.root.appendChild(this.makeButton("recipe-next", "Next Recipe", this.handlers.onNext));
     } else {
-      this.root.appendChild(this.makeButton("recipe-add", "+ Add " + scoopSize + " cup", this.handlers.onAdd));
+      const addButton = this.makeButton("recipe-add", "+ Add " + scoopSize + " cup", this.handlers.onAdd);
+      addButton.disabled = scoops >= maxScoops;
+      this.root.appendChild(addButton);
       this.root.appendChild(this.makeButton("recipe-remove", "− Remove", this.handlers.onRemove));
       this.root.appendChild(this.makeButton("recipe-check", "Check", this.handlers.onCheck));
     }
@@ -87,6 +91,8 @@ export class RecipeView {
 
       this.root.appendChild(feedback);
     }
+
+    this.addMenuButton();
   }
 
   //Shown after the last recipe
@@ -102,6 +108,14 @@ export class RecipeView {
     this.root.appendChild(message);
 
     this.root.appendChild(this.makeButton("recipe-play-again", "Play Again", onPlayAgain));
+    this.addMenuButton();
+  }
+
+  //Only shown when the game was opened from the main menu
+  private addMenuButton(): void {
+    if (this.handlers.onMenu) {
+      this.root.appendChild(this.makeButton("recipe-menu", "Back to Menu", this.handlers.onMenu));
+    }
   }
 
   private makeButton(className: string, label: string, onClick: () => void): HTMLButtonElement {

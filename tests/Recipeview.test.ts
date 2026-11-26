@@ -29,7 +29,7 @@ describe("RecipeView", () => {
     it("should show the recipe and the multiplier", () => {
         const root = document.createElement("div");
         const view = new RecipeView(root, makeHandlers([]));
-        view.render(flour, 0, null, 1, 5);
+        view.render(flour, 0, 6, null, 1, 5);
 
         expect(getText(root, ".recipe-progress")).toBe("Recipe 1 of 5");
         expect(getText(root, ".recipe-prompt")).toBe("The recipe needs 1/4 cup of flour. Make the recipe 3 times bigger!");
@@ -38,7 +38,7 @@ describe("RecipeView", () => {
     it("should draw one measuring cup for each scoop", () => {
         const root = document.createElement("div");
         const view = new RecipeView(root, makeHandlers([]));
-        view.render(flour, 2, null, 1, 5);
+        view.render(flour, 2, 6, null, 1, 5);
 
         expect(root.querySelectorAll(".recipe-cup").length).toBe(2);
         expect(getText(root, ".recipe-cup")).toBe("1/4 cup");
@@ -49,7 +49,7 @@ describe("RecipeView", () => {
         const clicks: string[] = [];
         const root = document.createElement("div");
         const view = new RecipeView(root, makeHandlers(clicks));
-        view.render(flour, 0, null, 1, 5);
+        view.render(flour, 0, 6, null, 1, 5);
 
         click(root, ".recipe-add");
         click(root, ".recipe-remove");
@@ -67,7 +67,7 @@ describe("RecipeView", () => {
         };
         const root = document.createElement("div");
         const view = new RecipeView(root, makeHandlers([]));
-        view.render(flour, 2, result, 1, 5);
+        view.render(flour, 2, 6, result, 1, 5);
 
         expect(getText(root, ".recipe-feedback h2")).toBe("Not enough flour!");
         expect(getText(root, ".recipe-hint")).toContain("Hint: 3 × 1/4 means");
@@ -84,7 +84,7 @@ describe("RecipeView", () => {
         };
         const root = document.createElement("div");
         const view = new RecipeView(root, makeHandlers(clicks));
-        view.render(flour, 3, result, 1, 5);
+        view.render(flour, 3, 6, result, 1, 5);
 
         expect(root.querySelector(".recipe-check")).toBeNull();
         expect(root.querySelector(".recipe-hint")).toBeNull();
@@ -101,5 +101,40 @@ describe("RecipeView", () => {
         expect(getText(root, "h1")).toBe("All recipes done!");
         click(root, ".recipe-play-again");
         expect(played).toBe(true);
+    });
+
+    it("should say cups when the amount is more than one cup", () => {
+        const root = document.createElement("div");
+        const view = new RecipeView(root, makeHandlers([]));
+        view.render(flour, 5, 6, null, 1, 5);
+
+        expect(getText(root, ".recipe-total")).toBe("You measured: 5/4 cups");
+    });
+
+    it("should disable the Add button at the scoop limit", () => {
+        const root = document.createElement("div");
+        const view = new RecipeView(root, makeHandlers([]));
+
+        view.render(flour, 5, 6, null, 1, 5);
+        expect((root.querySelector(".recipe-add") as HTMLButtonElement).disabled).toBe(false);
+
+        view.render(flour, 6, 6, null, 1, 5);
+        expect((root.querySelector(".recipe-add") as HTMLButtonElement).disabled).toBe(true);
+    });
+
+    it("should show Back to Menu only when onMenu is given", () => {
+        const root = document.createElement("div");
+        new RecipeView(root, makeHandlers([])).render(flour, 0, 6, null, 1, 5);
+        expect(root.querySelector(".recipe-menu")).toBeNull();
+
+        let backToMenu = false;
+        const handlers = { ...makeHandlers([]), onMenu: () => { backToMenu = true; } };
+        const view = new RecipeView(root, handlers);
+        view.render(flour, 0, 6, null, 1, 5);
+        click(root, ".recipe-menu");
+        expect(backToMenu).toBe(true);
+
+        view.showFinished(() => {});
+        expect(root.querySelector(".recipe-menu")).not.toBeNull();
     });
 });
