@@ -12,18 +12,22 @@ import type { MapLocation } from "./types";
 
   onStartLevel is a function given to us by MapScreen. The controller doesn't know
   how to start the game. It just calls this function with the chosen location.
+  onBackToMenu is optional. MapScreen gives it when the map was opened from the main menu,
+  and the controller hands it to the view so the view can draw a "Back to Menu" button.
 */
 export class MapController
 {
   private model: MapModel;
   private view: MapView;
   private onStartLevel: (location: MapLocation) => void;
+  private onBackToMenu: (() => void) | undefined;
 
-  public constructor(model: MapModel, view: MapView, onStartLevel: (location: MapLocation) => void)
+  public constructor(model: MapModel, view: MapView, onStartLevel: (location: MapLocation) => void, onBackToMenu?: () => void)
   {
     this.model = model;
     this.view = view;
     this.onStartLevel = onStartLevel;
+    this.onBackToMenu = onBackToMenu;
   }
 
   // Draws the map using the model's current statuses
@@ -33,7 +37,7 @@ export class MapController
     this.view.render(this.model.getStatuses(), (levelNumber: number) =>
     {
       this.selectLocation(levelNumber);
-    });
+    }, this.onBackToMenu);
   }
 
   // Called when a place on the map is chosen.

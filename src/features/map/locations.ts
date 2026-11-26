@@ -6,11 +6,10 @@ import { buildWordProblemOrders } from "../wordProblems/wordProblemOrders";
 /*
   The places on the food truck map, in the order they unlock.
 
-  Level 1 reuses the orders the game already had (LEVEL_ORDERS),
-  so nothing changes for the first level.
-  Levels 2 and 3 are new order lists.
+  Level 1 reuses the orders the game already had (LEVEL_ORDERS).
+  Level 2 is its own list of addition and subtraction orders, all in eighths.
+  Level 3 uses the fraction word problems (US-12), built by buildWordProblemOrders().
 
-  All pizzas use 8 slices because the game's plate is set up for eighths.
   To add a new place, add it to the end of this list with the next level number.
 */
 export const MAP_LOCATIONS: MapLocation[] = [
