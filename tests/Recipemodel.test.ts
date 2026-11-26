@@ -51,7 +51,7 @@ describe("RecipeModel", () => {
         const result = model.checkAnswer();
 
         expect(result.type).toBe("correct");
-        expect(result.message).toContain("2 × 2/3 = 4/3 cup of milk");
+        expect(result.message).toContain("2 × 2/3 = 4/3 cups of milk");
     });
 
     it("should say too few with a hint when there is not enough", () => {
@@ -94,5 +94,23 @@ describe("RecipeModel", () => {
         expect(() => new RecipeModel({ ingredient: "flour", numerator: 4, denominator: 4, multiplier: 3 })).toThrow("Invalid recipe");
         expect(() => new RecipeModel({ ingredient: "flour", numerator: 1, denominator: 4, multiplier: 1 })).toThrow("Invalid recipe");
         expect(() => new RecipeModel({ ingredient: "flour", numerator: 1, denominator: 4, multiplier: 2.5 })).toThrow("Invalid recipe");
+    });
+
+    it("should stop adding scoops at twice the answer", () => {
+        const model = new RecipeModel(flour);
+        addScoops(model, 10);
+
+        expect(model.getMaxScoops()).toBe(6);
+        expect(model.getScoops()).toBe(6);
+    });
+
+    it("should say cups only when the amount is more than one cup", () => {
+        const model = new RecipeModel(flour);
+        addScoops(model, 5);
+
+        expect(model.checkAnswer().message).toContain("You measured 5/4 cups.");
+        model.removeScoop();
+        model.removeScoop();
+        expect(model.checkAnswer().message).toContain("3 × 1/4 = 3/4 cup of flour");
     });
 });

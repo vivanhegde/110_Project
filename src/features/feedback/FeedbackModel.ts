@@ -18,11 +18,16 @@ export class FeedbackModel {
     const made = `${selectedSlices}/${order.denominator}`;
     const needed = `${order.numerator}/${order.denominator}`;
 
+    //Subtraction orders count the slices left, so the wording says "left" instead of "made"
+    const isSubtraction = "initialNumerator" in order;
+    const youHave = isSubtraction ? `you have ${made} left` : `you made ${made}`;
+    const orderNeeds = isSubtraction ? `The order needs ${needed} left` : `The order needs ${needed}`;
+
     if (result.correct) {
       this.currentFeedback = {
         type: "correct",
         title: "Perfect pizza, chef!",
-        message: `You made ${needed}. That's just right! +${this.pointsPerCorrect} points`,
+        message: `${isSubtraction ? `You have ${needed} left` : `You made ${needed}`}. That's just right! +${this.pointsPerCorrect} points`,
         pointsEarned: this.pointsPerCorrect,
         actionLabel: "Next Order",
       };
@@ -38,8 +43,8 @@ export class FeedbackModel {
       type: tooFew ? "tooFew" : "tooMany",
       title: tooFew ? "A little more pizza, please!" : "Whoa, that's too much pizza!",
       message: tooFew
-        ? `Not quite — you made ${made}. The order needs ${needed}. Add ${difference} more ${sliceWord}. Your score stays the same.`
-        : `Not quite — you made ${made}. The order needs ${needed}. Take away ${difference} ${sliceWord}. Your score stays the same.`,
+        ? `Not quite — ${youHave}. ${orderNeeds}. Add ${difference} more ${sliceWord}${isSubtraction ? " back" : ""}. Your score stays the same.`
+        : `Not quite — ${youHave}. ${orderNeeds}. Take away ${difference} ${sliceWord}. Your score stays the same.`,
       pointsEarned: 0,
       actionLabel: "Try Again",
       ...(this.incorrectAttempts >= 2 ? { explanation: createExplanation(order) } : {}),

@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { FeedbackModel } from "../src/features/feedback/FeedbackModel";
 import { PizzaOrderModel } from "../src/features/pizza/PizzaOrderModel";
+import { createSubtractionOrder } from "../src/features/pizza/CreateSubtractionOrder";
 
 describe("FeedbackModel", () => {
     it("should give correct feedback with 100 points when the answer matches", () => {
@@ -125,5 +126,19 @@ describe("FeedbackModel", () => {
     it("should reject invalid points values", () => {
         expect(() => new FeedbackModel(-10)).toThrow("Invalid points value");
         expect(() => new FeedbackModel(2.5)).toThrow("Invalid points value");
+    });
+
+    it("should talk about slices left for subtraction orders", () => {
+        const order = createSubtractionOrder(5, 2, 8);
+        const feedback = new FeedbackModel();
+
+        const tooFew = feedback.createFeedback(order, 2, { correct: false, message: "Try again!" });
+        expect(tooFew.message).toBe("Not quite — you have 2/8 left. The order needs 3/8 left. Add 1 more slice back. Your score stays the same.");
+
+        const tooMany = feedback.createFeedback(order, 4, { correct: false, message: "Try again!" });
+        expect(tooMany.message).toBe("Not quite — you have 4/8 left. The order needs 3/8 left. Take away 1 slice. Your score stays the same.");
+
+        const correct = feedback.createFeedback(order, 3, { correct: true, message: "Correct!" });
+        expect(correct.message).toBe("You have 3/8 left. That's just right! +100 points");
     });
 });
