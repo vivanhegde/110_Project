@@ -93,4 +93,24 @@ describe("MapController", () => {
     expect(test.controller.selectLocation(2)).toBe(true);
     expect(test.startedLevel()).toBe(2);
   });
+
+  // The controller passes onBackToMenu to the view, so the button goes back to the menu
+  it("should go back to the menu when Back to Menu is clicked", () => {
+    const container = document.createElement("div");
+    const model = new MapModel(threeLocations, null);
+    const view = new MapView(container);
+
+    let wentBack = false;
+    function onBackToMenu(): void
+    {
+      wentBack = true;
+    }
+
+    const controller = new MapController(model, view, function () {}, onBackToMenu);
+    controller.showMap();
+
+    const backButton = container.querySelector(".map-back-button") as HTMLButtonElement;
+    backButton.click();
+    expect(wentBack).toBe(true);
+  });
 });

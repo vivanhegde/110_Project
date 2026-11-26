@@ -39,7 +39,8 @@ export class MapView
   // Draws the whole map screen.
   // onSelect is a function given by the controller. When an unlocked place is clicked
   // we call it with that place's level number. The view doesn't start the level.
-  public render(statuses: LocationStatus[], onSelect: (levelNumber: number) => void): void
+  // onBackToMenu is optional. If it's given, a "Back to Menu" button is added under the map.
+  public render(statuses: LocationStatus[], onSelect: (levelNumber: number) => void, onBackToMenu?: () => void): void
   {
     // Clear whatever was on the screen before (the game or an older map)
     this.container.innerHTML = "";
@@ -83,17 +84,34 @@ export class MapView
     message.className = "map-message";
     this.message = message;
 
-    main.appendChild(title);
-    main.appendChild(subtitle);
-    main.appendChild(board);
+    // A link to the division practice mode (US-14). It doesn't change map progress.
     const divisionLink = document.createElement("a");
     divisionLink.className = "map-division-link";
     divisionLink.href = "?mode=division";
     divisionLink.textContent = "Practice dividing food into equal portions";
+
     const practice = document.createElement("p");
     practice.appendChild(divisionLink);
+
+    main.appendChild(title);
+    main.appendChild(subtitle);
+    main.appendChild(board);
     main.appendChild(practice);
     main.appendChild(message);
+
+    // Only add the Back to Menu button when there is a menu to go back to
+    if (onBackToMenu !== undefined)
+    {
+      const backButton = document.createElement("button");
+      backButton.className = "map-back-button";
+      backButton.textContent = "Back to Menu";
+      backButton.addEventListener("click", function ()
+      {
+        onBackToMenu();
+      });
+      main.appendChild(backButton);
+    }
+
     page.appendChild(main);
 
     this.container.appendChild(page);
