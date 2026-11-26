@@ -144,4 +144,34 @@ describe("MapView", () =>
     const message = container.querySelector(".map-message") as HTMLElement;
     expect(message.textContent).toBe("Hello");
   });
+
+  // With onBackToMenu, a Back to Menu button is drawn and calls it when clicked
+  it("should show a Back to Menu button when onBackToMenu is given", () =>
+  {
+    const container = document.createElement("div");
+    const view = new MapView(container);
+
+    let backClicks = 0;
+    function onBackToMenu(): void
+    {
+      backClicks = backClicks + 1;
+    }
+
+    view.render(statuses, ignoreClick, onBackToMenu);
+    const backButton = container.querySelector(".map-back-button") as HTMLButtonElement;
+    expect(backButton.textContent).toBe("Back to Menu");
+
+    backButton.click();
+    expect(backClicks).toBe(1);
+  });
+
+  // Without onBackToMenu (for example ?mode=map), there is no menu to go back to
+  it("should not show a Back to Menu button without onBackToMenu", () =>
+  {
+    const container = document.createElement("div");
+    const view = new MapView(container);
+    view.render(statuses, ignoreClick);
+
+    expect(container.querySelector(".map-back-button")).toBeNull();
+  });
 });

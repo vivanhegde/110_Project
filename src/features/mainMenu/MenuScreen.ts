@@ -14,7 +14,7 @@ import "./Menu.css";
 
   The flow:
     1. The menu is drawn, showing the student's total stars.
-    2. Play opens the food truck map.
+    2. Play opens the food truck map. The map's Back to Menu button returns here.
     3. My Progress opens the progress screen. Its Back button returns here.
     4. Recipe Practice opens the recipe scaling game. Its Back to Menu button returns here.
 */
@@ -30,7 +30,7 @@ export function startMenuScreen(app: HTMLElement): void
 
   view.render(
     progress.getTotalStars(),
-    () => startMapScreen(app),
+    () => startMapScreen(app, () => startMenuScreen(app)),
     () => startProgressScreen(app, () => startMenuScreen(app)),
     () => startRecipeGame(app, () => startMenuScreen(app))
   );

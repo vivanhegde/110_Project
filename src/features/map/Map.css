@@ -168,6 +168,23 @@
   color: #888888;
 }
 
+/* Back to Menu button under the map, same as the game's buttons */
+.map-back-button {
+  margin-top: 12px;
+  padding: 12px 24px;
+  border: 0;
+  border-radius: 14px;
+  background: #dc5136;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.map-back-button:hover {
+  background: #c0432b;
+}
+
 .map-message {
   min-height: 24px;
   margin-top: 20px;
