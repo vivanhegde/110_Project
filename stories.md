@@ -190,25 +190,154 @@ These are initial estimates for team discussion. Our team may adjust the scope b
 
 ---
 
-# Future User Stories
+# Sprint 1 Results
 
-The following stories are planned for later milestones. They are not part of Sprint 1.
+All five Sprint 1 stories were completed, along with US-6 and US-7, which were pulled in from the backlog during the sprint. Each story was merged through a reviewed pull request.
 
-| ID | User Story | Priority | Estimated Hours |
-|---|---|---|---:|
-| US-6 | As a student, I want to see a worked example before a level so that I understand how to solve the problems. | High | 14 |
-| US-7 | As a student, I want the game to explain the answer after multiple incorrect attempts so that I can learn from my mistakes. | High | 10 |
-| US-8 | As a student, I want to see my progress and earned stars so that I know how well I am doing. | Medium | 10 |
-| US-9 | As a student, I want to select unlocked locations on a map so that I can progress through the food truck journey. | Medium | 17 |
-| US-10 | As a student, I want to cut pizza into smaller equal slices so that I can understand equivalent fractions. | High | 20 |
-| US-11 | As a student, I want to add and subtract fractions with unlike denominators so that I can practice more advanced fraction problems. | High | 17 |
-| US-12 | As a student, I want to solve fraction word problems so that I can apply fractions to everyday situations. | Medium | 13 |
-| US-13 | As a student, I want to scale recipes using measuring cups so that I can practice multiplying fractions by whole numbers. | Medium | 16 |
-| US-14 | As a student, I want to divide food into portions so that I can practice dividing fractions. | Medium | 13 |
-| US-15 | As a teacher, I want to select fraction operations and denominators so that students practice topics relevant to my lessons. | Medium | 26 |
-| US-16 | As a student, I want pizzas cut into different numbers of slices, from halves to twelfths, so that I can practice fractions with denominators from 2 to 12. | High | 12 |
+| ID | Story | Pull Requests | Status |
+|---|---|---|---|
+| US-1 | Answer Pizza Orders | #17, #24 | Done |
+| US-2 | Build Pizza Orders Visually | #19 | Done |
+| US-3 | Complete a Two or Five Order or More Level | #21 | Done |
+| US-4 | Subtract Fractions | #20 | Done |
+| US-5 | Receive Helpful Hints | #18, #25 | Done |
+| US-6 | View Worked Examples Before a Level | #22 | Done |
+| US-7 | Receive Detailed Explanations After Incorrect Attempts | #23 | Done |
 
-Additional features, such as dialogue cards, animated explanations, saved progress, and achievements, may be added in later sprints.
+At the end of the sprint, all features were joined into one game screen (#26) so a level uses the pizza, plate, feedback, worked example, and level parts together.
+
+---
+
+# Sprint 2: Progression and New Fraction Topics
+
+**Sprint Goal:** Give students a reason to keep playing (a map of locations, stars, and saved progress) and add new fraction topics beyond adding and subtracting like denominators.
+
+The full acceptance criteria and task lists for each story are in its GitHub issue.
+
+## US-8: View Progress and Earned Stars
+
+**Priority:** Medium
+**Estimated Hours:** 10
+
+**User Story:**
+As a student, I want to see my progress and earned stars so that I know how well I am doing.
+
+**What was delivered:**
+- Finishing a level earns 1 to 3 stars: 3 for every order correct on the first try, 2 for passing, and 1 for finishing without passing.
+- Stars are shown on the results screen and saved in the browser.
+- A My Progress screen lists the stars earned on each level.
+
+## US-9: Select Unlocked Locations on a Map
+
+**Priority:** Medium
+**Estimated Hours:** 17
+
+**User Story:**
+As a student, I want to select unlocked locations on a map so that I can progress through the food truck journey.
+
+**What was delivered:**
+- A food truck map with three locations: Pizza Park, Seaside Pier, and City Square.
+- Each location shows whether it is Completed, Open, or Locked. Locked locations cannot be clicked.
+- Passing a level unlocks the next location, and the results screen has a Back to Map button.
+- Map progress is saved in the browser's localStorage and kept after closing the game.
+
+## US-10: Cut Pizza into Smaller Equal Slices
+
+**Priority:** High
+**Estimated Hours:** 20
+
+**User Story:**
+As a student, I want to cut pizza into smaller equal slices so that I can understand equivalent fractions.
+
+**What was delivered:**
+- A cutting practice mode (`?mode=cutting`) where pizzas are cut into smaller equal slices.
+
+## US-11: Add and Subtract Fractions with Unlike Denominators
+
+**Priority:** High
+**Estimated Hours:** 17
+
+**User Story:**
+As a student, I want to add and subtract fractions with unlike denominators so that I can practice more advanced fraction problems.
+
+**What was delivered:**
+- A practice mode (`?practice=unlike`) with addition and subtraction problems that use different denominators, up to a common denominator of 12.
+- Hints for finding a common denominator.
+
+## US-12: Solve Fraction Word Problems
+
+**Priority:** Medium
+**Estimated Hours:** 13
+
+**User Story:**
+As a student, I want to solve fraction word problems so that I can apply fractions to everyday situations.
+
+**What was delivered:**
+- Food-related word problems for addition and subtraction, with hints and explanations.
+
+## US-13: Scale Recipes Using Measuring Cups
+
+**Priority:** Medium
+**Estimated Hours:** 16
+
+**User Story:**
+As a student, I want to scale recipes using measuring cups so that I can practice multiplying fractions by whole numbers.
+
+**What was delivered:**
+- A recipe practice mode (`?mode=recipe`) where students multiply fractional ingredient amounts by a whole number using measuring cups.
+
+## US-14: Divide Food into Equal Portions
+
+**Priority:** Medium
+**Estimated Hours:** 13
+
+**User Story:**
+As a student, I want to divide food into portions so that I can practice dividing fractions.
+
+**What was delivered:**
+- A division practice mode (`?mode=division` or `/division.html`) with six orders, grouping hints, and Play Again.
+- It is linked from the food truck map and does not change map unlocks or stars.
+
+## Sprint 2 Summary
+
+| ID | Story | Estimated Hours | Pull Requests | Status |
+|---|---|---:|---|---|
+| US-8 | View Progress and Earned Stars | 10 | #33, #34 | Done |
+| US-9 | Select Unlocked Locations on a Map | 17 | #31 | Done |
+| US-10 | Cut Pizza into Smaller Equal Slices | 20 | #29 | Done |
+| US-11 | Add and Subtract Fractions with Unlike Denominators | 17 | #32 | Done |
+| US-12 | Solve Fraction Word Problems | 13 | #30 | Done |
+| US-13 | Scale Recipes Using Measuring Cups | 16 | #28 | Done |
+| US-14 | Divide Food into Equal Portions | 13 | #35 | Done |
+| | **Total** | **106** | | |
+
+---
+
+# Sprint 3: Integration, Polish, and Documentation
+
+**Sprint Goal:** Connect the Sprint 2 features into one game a student can play from start to finish, fix bugs, and bring the documentation up to date before the demo video.
+
+| Work | Related Story | Pull Request | Status |
+|---|---|---|---|
+| Main menu with Play, My Progress, and total stars | US-8 | #36 | Done |
+| Word problems used as the Level 3 (City Square) orders | US-12 | #38 | Done |
+| Unlike-denominator orders supported in the shared game screen | US-11 | #40 | Done |
+| 14 unit tests for the shared fraction helpers (shared/fractions.ts) | All | #39 | Done |
+| Back to Menu button on the map, map cleanup, and new map tests | US-8, US-9 | #41 | Done |
+| Update README.md and stories.md for Sprints 2 and 3 | All | #41 | Done |
+
+---
+
+# Backlog
+
+These stories are not finished yet.
+
+| ID | User Story | Priority | Estimated Hours | Status |
+|---|---|---|---:|---|
+| US-15 | As a teacher, I want to select fraction operations and denominators so that students practice topics relevant to my lessons. | Medium | 26 | Planned after Sprint 3, before the demo video |
+| US-16 | As a student, I want pizzas cut into different numbers of slices, from halves to twelfths, so that I can practice fractions with denominators from 2 to 12. | High | 12 | Not started |
+
+Other ideas for later include dialogue cards, animated explanations, and achievements.
 
 ---
 
@@ -225,7 +354,7 @@ A user story is considered complete when:
 
 ## Next Steps
 
-1. Add mockup screens for incorrect subtraction answer and level not passed and for more future features and US
-2. Review these stories as a team and confirm estimates and priorities.
-3. Assign tasks during sprint planning.
-4. Enter the stories and tasks into GitHub Projects as development begins.
+1. Add mockup screens for US-15 (the teacher settings screen).
+2. Break US-15 into tasks and assign them before the demo video, if time allows.
+3. Decide as a team whether US-16 fits before the end of the quarter.
+4. Keep this file, the GitHub issues, and the GitHub Project board in sync at each sprint planning meeting.
