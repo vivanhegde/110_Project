@@ -91,6 +91,41 @@ export class PizzaOrderView {
               Drag slices onto the plate.
             </p>
 
+            <div id="addition-cutting-controls" hidden>
+              <p>
+                Pizza divided into
+                <strong id="addition-cut-denominator">8</strong>
+                equal slices
+              </p>
+
+              <div class="addition-buttons">
+                <button id="addition-fewer"
+                        class="addition-secondary"
+                        type="button">
+                  Fewer
+                </button>
+
+                <button id="addition-more"
+                        class="addition-secondary"
+                        type="button">
+                  More
+                </button>
+
+                <button id="addition-confirm-cuts"
+                        class="addition-primary"
+                        type="button">
+                  Confirm
+                </button>
+
+                <button id="addition-change-cuts"
+                        class="addition-secondary"
+                        type="button"
+                        hidden>
+                  Change Cuts
+                </button>
+              </div>
+            </div>
+
             <div id="addition-plate"
                  class="addition-plate"></div>
 
@@ -170,16 +205,32 @@ export class PizzaOrderView {
       ? (order as SubtractionOrder).subtractNumerator
       : (order.secondNumerator ?? 0);
 
+    // Read the original unlike-denominator question.
+    const unlike = order.unlikeOrder;
+
+    // Use original numerators for the question display.
+    const displayFirst = unlike?.firstNumerator ?? first;
+    const displaySecond = unlike?.secondNumerator ?? second;
+
+    // Use each fraction's original denominator.
+    const firstDenominator =
+      unlike?.firstDenominator ?? order.denominator;
+    const secondDenominator =
+      unlike?.secondDenominator ?? order.denominator;
+
     this.element("addition-heading").textContent =
       `Let's make ${name}'s pizza!`;
 
     this.element("addition-customer").textContent = name;
 
+    // Describe the original fractions in the customer request.
     this.element("addition-request").textContent =
       order.request ??
-      (subtract
-        ? `I have ${first}/${order.denominator}. Please take away ${second}/${order.denominator}.`
-        : `I'd like ${first}/${order.denominator} plus ${second}/${order.denominator} of a pizza!`);
+      (unlike
+        ? `I'd like ${displayFirst}/${firstDenominator} ${unlike.operation === "subtraction" ? "minus" : "plus"} ${displaySecond}/${secondDenominator} of a pizza!`
+        : subtract
+          ? `I have ${displayFirst}/${firstDenominator}. Please take away ${displaySecond}/${secondDenominator}.`
+          : `I'd like ${displayFirst}/${firstDenominator} plus ${displaySecond}/${secondDenominator} of a pizza!`);
 
     this.element("addition-instruction").textContent =
       subtract
@@ -188,10 +239,11 @@ export class PizzaOrderView {
 
     const equation = this.element("addition-equation");
 
+    // Display the original equation.
     equation.replaceChildren(
-      this.fraction(first, order.denominator),
+      this.fraction(displayFirst, firstDenominator),
       document.createTextNode(subtract ? "−" : "+"),
-      this.fraction(second, order.denominator)
+      this.fraction(displaySecond, secondDenominator)
     );
 
     //Update the order note and level label based on whether the order is a subtraction or addition order
@@ -311,6 +363,56 @@ export class PizzaOrderView {
     );
   }
 
+  // Show cutting controls for US11 and hide them for other orders.
+  public showCuttingControls(
+    state: {
+      cutting: boolean;
+      denominator: number;
+      canFewer: boolean;
+      canMore: boolean;
+      canChangeCuts: boolean;
+      locked: boolean;
+    } | null
+  ): void {
+    const controls = this.element("addition-cutting-controls");
+    controls.hidden = state === null;
+
+    if (!state) return;
+
+    this.element("addition-cut-denominator").textContent =
+      String(state.denominator);
+
+    const fewer =
+      this.element<HTMLButtonElement>("addition-fewer");
+    const more =
+      this.element<HTMLButtonElement>("addition-more");
+    const confirm =
+      this.element<HTMLButtonElement>("addition-confirm-cuts");
+    const change =
+      this.element<HTMLButtonElement>("addition-change-cuts");
+
+    // Show selection buttons during the cutting stage.
+    fewer.hidden = !state.cutting;
+    more.hidden = !state.cutting;
+    confirm.hidden = !state.cutting;
+
+    fewer.disabled = state.locked || !state.canFewer;
+    more.disabled = state.locked || !state.canMore;
+
+    // Allow every available denominator to be submitted.
+    confirm.disabled = state.locked;
+
+    // Allow cutting again after all moved slices are returned.
+    change.hidden = state.cutting;
+    change.disabled = state.locked || !state.canChangeCuts;
+  }
+
+  // Allow answer submission only when the game is ready.
+  public setCheckEnabled(enabled: boolean): void {
+    this.element<HTMLButtonElement>("addition-check").disabled =
+      !enabled;
+  }
+
   //Reset controls when starting a new order
   public resetControls(): void {
     const check =
@@ -324,6 +426,9 @@ export class PizzaOrderView {
     check.disabled = false;
     next.hidden = true;
     hint.hidden = false;
+
+    // Hide cutting controls until the current order is configured.
+    this.showCuttingControls(null);
   }
 
   //Unlocks progression after a correct answer
@@ -366,6 +471,29 @@ export class PizzaOrderView {
         </button>
       </main>
     `;
+  }
+
+  // Connect both denominator buttons to one callback.
+  public onStepDenominator(
+    callback: (direction: 1 | -1) => void
+  ): void {
+    this.element("addition-fewer")
+      .addEventListener("click", () => callback(-1));
+
+    this.element("addition-more")
+      .addEventListener("click", () => callback(1));
+  }
+
+  // Connect the confirmation button.
+  public onConfirmCutting(callback: () => void): void {
+    this.element("addition-confirm-cuts")
+      .addEventListener("click", callback);
+  }
+
+  // Connect the button for reopening cutting.
+  public onChangeCuts(callback: () => void): void {
+    this.element("addition-change-cuts")
+      .addEventListener("click", callback);
   }
 
   //Connects the interactive controls to the game

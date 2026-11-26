@@ -73,3 +73,70 @@
   color: #e0a100;
   margin: 4px 0 12px;
 }
+
+/* Keep US11 cutting controls compact within the shared play card. */
+#addition-cutting-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px 20px;
+  padding: 16px 20px;
+  background: #fffaf2;
+  border-top: 1px solid #f0e3d1;
+  border-bottom: 1px solid #eadcc9;
+}
+
+#addition-cutting-controls > p {
+  margin: 0;
+  color: #674b36;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+#addition-cut-denominator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
+  margin: 0 4px;
+  padding: 2px 7px;
+  border-radius: 9px;
+  background: #ffe6a0;
+  color: #4a2e1f;
+  font-size: 17px;
+}
+
+#addition-cutting-controls .addition-buttons {
+  flex: 0 0 auto;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+#addition-cutting-controls .addition-buttons button {
+  flex: 0 0 auto;
+  min-width: 82px;
+  min-height: 42px;
+  padding: 10px 16px;
+  font-size: 14px;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+#addition-cutting-controls #addition-change-cuts {
+  min-width: 132px;
+}
+
+#addition-cutting-controls button:disabled {
+  background: #f4eee4;
+  border-color: #e9dfd0;
+  color: #a09689;
+  cursor: not-allowed;
+}
+
+#addition-cutting-controls button:focus-visible {
+  outline: 2px solid #d84b32;
+  outline-offset: 3px;
+}

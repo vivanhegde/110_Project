@@ -229,6 +229,7 @@ describe("UnlikeDenominatorOrderController", () => {
       denominator: 12,
       firstNumerator: 4,
       secondNumerator: 3,
+      unlikeOrder: order,
     });
     expect(view.drawOrder).toHaveBeenLastCalledWith(12);
     expect(view.setInteractionEnabled).toHaveBeenLastCalledWith(true);
@@ -249,6 +250,7 @@ describe("UnlikeDenominatorOrderController", () => {
       denominator: 12,
       initialNumerator: 9,
       subtractNumerator: 2,
+      unlikeOrder: order,
     });
     expect(view.drawOrder).toHaveBeenLastCalledWith(12, 9);
     expect(controller.checkAnswer().correct).toBe(false);

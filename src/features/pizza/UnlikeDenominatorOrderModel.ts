@@ -54,6 +54,7 @@ export class UnlikeDenominatorOrderModel {
         denominator: order.commonDenominator, // Common slice denominator.
         initialNumerator: order.convertedFirstNumerator, // Starting slices.
         subtractNumerator: order.convertedSecondNumerator, // Slices to remove.
+        unlikeOrder: this.getOrder(), // Original question data.
       };
     }
 
@@ -63,6 +64,7 @@ export class UnlikeDenominatorOrderModel {
       denominator: order.commonDenominator, // Common slice denominator.
       firstNumerator: order.convertedFirstNumerator, // First slice count.
       secondNumerator: order.convertedSecondNumerator, // Second slice count.
+      unlikeOrder: this.getOrder(), // Original question data.
     };
   }
 
