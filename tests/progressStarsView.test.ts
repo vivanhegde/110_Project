@@ -77,3 +77,13 @@ describe("ProgressView", () => {
         expect(container.querySelectorAll(".progress-page").length).toBe(1);
     });
 });
+
+describe("ProgressView style (matches the rest of the game)", () => {
+    it("should show the game's header bar above the progress card", () => {
+        const container = document.createElement("div");
+        new ProgressView(container).render([], 0, 0, function () {});
+
+        expect(container.querySelector(".progress-screen .progress-header .progress-logo")?.textContent).toBe("🍕 Fraction Food Truck");
+        expect(container.querySelectorAll(".progress-screen").length).toBe(1);
+    });
+});

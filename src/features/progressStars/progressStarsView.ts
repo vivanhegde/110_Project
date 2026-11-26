@@ -25,6 +25,20 @@ export class ProgressView {
         // Clear whatever was on the screen before
         this.container.innerHTML = "";
 
+        // The whole screen: cream background and the same top bar as the menu and map
+        const screen = document.createElement("div");
+        screen.className = "progress-screen";
+
+        const header = document.createElement("header");
+        header.className = "progress-header";
+
+        const logo = document.createElement("div");
+        logo.className = "progress-logo";
+        logo.textContent = "🍕 Fraction Food Truck";
+
+        header.appendChild(logo);
+        screen.appendChild(header);
+
         const page = document.createElement("div");
         page.className = "progress-page";
 
@@ -92,6 +106,7 @@ export class ProgressView {
         back.addEventListener("click", onBack);
         page.appendChild(back);
 
-        this.container.appendChild(page);
+        screen.appendChild(page);
+        this.container.appendChild(screen);
     }
 }

@@ -12,6 +12,7 @@ import { startCuttingGame } from "./features/plate/cuttingGame";
 import { startMapScreen } from "./features/map/MapScreen";
 import { startProgressScreen } from "./features/progressStars/progressStarsScreen";
 import { startDivisionGame } from "./features/division/DivisionGame";
+import { startMenuScreen } from "./features/mainMenu/MenuScreen";
 
 const app = document.getElementById("app");
 
@@ -65,14 +66,18 @@ if (practice === "unlike") {
   controller.startOrder(denominator);
   
 } else if (mode === "progress") {
-  //The progress screen (US-8). Back goes to the map.
-  startProgressScreen(app, () => startMapScreen(app));
+  //The progress screen (US-8). Back goes to the main menu.
+  startProgressScreen(app, () => startMenuScreen(app));
+
+} else if (mode === "map") {
+  // Skip the menu and go straight to the food truck map
+  startMapScreen(app);
 
 } else if (mode === "game") {
   // Skip the map and go straight to level 1
   startGame(app);
 
 } else {
-  // Default: open the food truck map (US-9)
-  startMapScreen(app);
+  // Default: open the main menu (US-8). Play goes to the food truck map.
+  startMenuScreen(app);
 }
