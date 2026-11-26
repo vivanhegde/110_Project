@@ -1,3 +1,32 @@
+/* The whole progress screen. Colors and sizes match Map.css and Menu.css. */
+.progress-screen {
+  background: #fff7e9;
+  color: #403026;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  padding-bottom: 40px;
+}
+
+.progress-screen * {
+  box-sizing: border-box;
+}
+
+/* Top bar, same look as the map's and menu's header */
+.progress-header {
+  display: flex;
+  align-items: center;
+  min-height: 76px; /* same height as the map's and menu's header */
+  padding: 18px 40px;
+  background: #fffdf8;
+  border-bottom: 2px solid #eadcc9;
+}
+
+.progress-logo {
+  color: #d84b32;
+  font-size: 26px;
+  font-weight: 700;
+}
+
 .progress-page {
     max-width: 700px;
     margin: 40px auto;
@@ -5,7 +34,7 @@
     background: #fffdf8;
     border: 2px solid #edddc8;
     border-radius: 18px;
-    font-family: inherit;
+    font-family: Arial, sans-serif;
   }
   
   .progress-page h1 {

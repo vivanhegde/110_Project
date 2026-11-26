@@ -4,7 +4,7 @@ import { MapView } from "../src/features/map/MapView";
 
 const starts = vi.hoisted(() => ({
   addition: vi.fn(), subtraction: vi.fn(), unlike: vi.fn(), recipe: vi.fn(),
-  cutting: vi.fn(), division: vi.fn(), progress: vi.fn(), game: vi.fn(), map: vi.fn(),
+  cutting: vi.fn(), division: vi.fn(), progress: vi.fn(), game: vi.fn(), map: vi.fn(), menu: vi.fn()
 }));
 
 vi.mock("../src/features/pizza/AdditionGame", () => ({ startAdditionGame: starts.addition }));
@@ -16,6 +16,7 @@ vi.mock("../src/features/division/DivisionGame", () => ({ startDivisionGame: sta
 vi.mock("../src/features/progressStars/progressStarsScreen", () => ({ startProgressScreen: starts.progress }));
 vi.mock("../src/features/game/GameScreen", () => ({ startGame: starts.game }));
 vi.mock("../src/features/map/MapScreen", () => ({ startMapScreen: starts.map }));
+vi.mock("../src/features/mainMenu/MenuScreen", () => ({ startMenuScreen: starts.menu }));
 
 const plate = vi.hoisted(() => ({
   setModel: vi.fn(), setView: vi.fn(), setController: vi.fn(), startOrder: vi.fn(),
@@ -41,7 +42,7 @@ beforeEach(() => {
 
 describe("Division routing compatibility", () => {
   it.each([
-    ["", "map"], ["?mode=unknown", "map"], ["?mode=addition", "addition"],
+    ["", "menu"], ["?mode=unknown", "menu"], ["?mode=map", "map"], ["?mode=addition", "addition"],
     ["?mode=subtraction", "subtraction"], ["?mode=recipe", "recipe"],
     ["?mode=cutting", "cutting"], ["?mode=division", "division"],
     ["?mode=game", "game"], ["?mode=progress", "progress"],
@@ -55,13 +56,13 @@ describe("Division routing compatibility", () => {
     expect(starts[expected].mock.calls[0][0]).toBe(document.getElementById("app"));
   });
 
-  it("preserves the progress screen's return-to-map callback", async () => {
+  it("sends the progress screen's Back button to the main menu", async () => {
     window.history.replaceState(null, "", "/?mode=progress");
     await import("../src/main");
-    const backToMap = starts.progress.mock.calls[0][1];
-    expect(backToMap).toBeTypeOf("function");
-    backToMap();
-    expect(starts.map).toHaveBeenCalledWith(document.getElementById("app"));
+    const backToMenu = starts.progress.mock.calls[0][1];
+    expect(backToMenu).toBeTypeOf("function");
+    backToMenu();
+    expect(starts.menu).toHaveBeenCalledWith(document.getElementById("app"));
   });
 
   it("preserves the demo plate setup", async () => {

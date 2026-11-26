@@ -192,7 +192,7 @@ export class PizzaOrderView {
 
   //Displays the current customer's order
  
-  public showOrder(order: PizzaOrder): void {
+  public showOrder(order: PizzaOrder, isWordProblem: boolean = false): void {
     const name = order.customerName ?? "Customer";
     const subtract = "initialNumerator" in order;
 
@@ -260,6 +260,25 @@ export class PizzaOrderView {
       label.textContent = subtract
         ? "Subtracting fractions"
         : "Adding fractions";
+    }
+
+    if (isWordProblem) {
+      this.element("addition-heading").textContent =
+        "Word Problem Challenge!";
+
+      this.element("addition-instruction").textContent =
+        "Read the problem and use the pizza slices to find your answer.";
+
+      this.element("addition-order-note").textContent =
+        "Solve the customer's word problem.";
+
+      equation.hidden = true;
+
+      if (label) {
+        label.textContent = "Word Problems";
+      }
+    } else {
+      equation.hidden = false;
     }
 
     this.showSelectedSlices(
@@ -331,6 +350,7 @@ export class PizzaOrderView {
       );
 
       const equation = this.element("addition-equation");
+      equation.hidden = false;
 
       equation.append(
         document.createTextNode("="),
@@ -526,7 +546,9 @@ export class PizzaOrderView {
   ): void {
     this.showMessage(
       `${feedback.title} ${feedback.message}`,
-      feedback.type === "correct" ? "correct" : "incorrect"
+      feedback.type === "correct"
+        ? "correct"
+        : "incorrect"
     );
 
     if (feedback.type === "correct") {
@@ -534,6 +556,8 @@ export class PizzaOrderView {
         "✓ Order served!";
 
       const equation = this.element("addition-equation");
+
+      equation.hidden = false;
 
       equation.append(
         document.createTextNode("="),
@@ -544,11 +568,11 @@ export class PizzaOrderView {
       );
     }
 
-    this.showSelectedSlices(
-      selected,
-      order.denominator
-    );
-  }
+  this.showSelectedSlices(
+    selected,
+    order.denominator
+  );
+}
 
   //Shows the action chosen by the FeedbackController
   public showAction(label: string): void {

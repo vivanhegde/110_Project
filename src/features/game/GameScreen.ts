@@ -24,6 +24,9 @@ import { WorkedExampleView } from "../workedExamples/WorkedExampleView";
 import { renderExplanation } from "../feedback/ExplanationView";
 import "../pizza/SubtractionGame.css";
 
+import { WordProblemModel } from "../wordProblems/WordProblemModel";
+import { WORD_PROBLEMS } from "../wordProblems/problems";
+
 
 import type {
   PizzaOrder,
@@ -296,6 +299,21 @@ export function startGame(
     return level.getCurrentOrder();
   }
 
+  function currentWordProblem(): WordProblemModel | null {
+    if (levelNumber !== 3) {
+      return null;
+    }
+
+    const index =
+      level.getProgress().currentOrderNumber - 1;
+
+    const problem = WORD_PROBLEMS[index];
+
+    return problem
+      ? new WordProblemModel(problem)
+      : null;
+  }
+
   // Refresh slice counts, cutting controls, and dragging.
   function refreshPlateState(): void {
     if (level.isLevelComplete()) return;
@@ -351,11 +369,6 @@ export function startGame(
     );
 
     orderView.showCuttingControls(null);
-    orderView.setCheckEnabled(!locked);
-
-    plateView.setInteractionEnabled(
-      !locked && examplePanel.hidden === true
-    );
   }
 
   //Displays a worked example
@@ -379,14 +392,18 @@ export function startGame(
         examplePanel.hidden = true;
         content.hidden = false;
 
-        // Restore interaction according to the current stage.
-        refreshPlateState();
+        if (currentUnlike) {
+          // Restore US11 controls according to the current stage.
+          refreshPlateState();
+        } else {
+          plateView.setInteractionEnabled(!locked);
+        }
       },
       beforeLevel
     );
   }
 
-  // Prepare the next order using its existing game modules.
+  //Prepares the next pizza order
   function beginOrder(): void {
     const order = current();
 
@@ -397,10 +414,8 @@ export function startGame(
     currentAddition = null;
     currentUnlike = null;
 
-    orderView.showOrder(order);
-    orderView.resetControls();
-
-    levelView.renderHeader(level.getProgress());
+    // Reconnect the shared callback when switching away from a US11 order.
+    plateController.setOnSliceCountChanged(refreshPlateState);
 
     if (order.unlikeOrder) {
       // Let the US11 controller manage cutting and slice changes.
@@ -411,32 +426,47 @@ export function startGame(
 
       currentUnlike.setOnStateChanged(refreshPlateState);
       currentUnlike.startOrder(order.unlikeOrder);
-
-      orderView.showMessage(
-        "Choose the least common denominator, then click Confirm."
-      );
+    } else if (isSubtraction(order)) {
+      plateController.startSubtractionOrder(order);
     } else {
-      // Use the existing callback for same-denominator orders.
-      plateController.setOnSliceCountChanged(refreshPlateState);
+      plateController.startOrder(order.denominator);
 
-      if (isSubtraction(order)) {
-        plateController.startSubtractionOrder(order);
-      } else {
-        plateController.startOrder(order.denominator);
-
-        currentAddition = new PizzaOrderController(
-          new PizzaOrderModel(order)
-        );
-      }
-
-      orderView.showMessage(
-        isSubtraction(order)
-          ? "Drag slices from the starting pizza to the return plate. Check how many remain."
-          : "Move slices from the tray onto your plate, then check your order."
+      currentAddition = new PizzaOrderController(
+        new PizzaOrderModel(order)
       );
     }
 
-    refreshPlateState();
+    if (!currentUnlike) {
+      plateView.setInteractionEnabled(true);
+    }
+
+    // Update the customer and level displays.
+    orderView.showOrder(order, levelNumber === 3);
+    orderView.resetControls();
+
+    levelView.renderHeader(level.getProgress());
+
+    const wordProblem = currentWordProblem();
+
+    orderView.showMessage(
+      currentUnlike
+        ? "Choose the least common denominator, then click Confirm."
+        : wordProblem
+          ? "Read the word problem and use the pizza slices to solve it."
+          : isSubtraction(order)
+            ? "Drag slices from the starting pizza to the return plate. Check how many remain."
+            : "Move slices from the tray onto your plate, then check your order."
+    );
+
+    orderView.showSelectedSlices(
+      isSubtraction(order) ? order.initialNumerator : 0,
+      order.denominator
+    );
+
+    if (currentUnlike) {
+      // Apply US11's current denominator and cutting state after rendering.
+      refreshPlateState();
+    }
   }
 
   // Change the selected denominator through the US11 controller.
@@ -540,10 +570,23 @@ export function startGame(
       result
     );
 
-    renderExplanation(
-      explanationPanel,
-      response.explanation
-    );
+    const wordProblem = currentWordProblem();
+
+    if (
+      wordProblem &&
+      !result.correct &&
+      feedback.getIncorrectAttempts() >= 2
+    ) {
+      explanationPanel.textContent =
+        wordProblem.getExplanation();
+
+      explanationPanel.hidden = false;
+    } else {
+      renderExplanation(
+        explanationPanel,
+        response.explanation
+      );
+    }
 
     orderView.showSelectedSlices(
       answer,
@@ -562,8 +605,10 @@ export function startGame(
 
     orderView.showAction(response.actionLabel);
 
-    // Lock cutting controls while feedback is displayed.
-    refreshPlateState();
+    if (currentUnlike) {
+      // Lock cutting controls while feedback is displayed.
+      refreshPlateState();
+    }
   });
 
   //Handles Try Again or Next Order.
@@ -578,11 +623,14 @@ export function startGame(
       renderExplanation(explanationPanel);
 
       locked = false;
+      plateView.setInteractionEnabled(true);
 
       orderView.resetControls();
 
-      // Restore cutting controls and preserve the current slices.
-      refreshPlateState();
+      if (currentUnlike) {
+        // Restore cutting controls and preserve the current slices.
+        refreshPlateState();
+      }
 
       orderView.showMessage(
         "Try moving slices again, then check your answer."
@@ -624,7 +672,10 @@ export function startGame(
           content.hidden = false;
 
           beginOrder();
-          openExample(true);
+
+          if (levelNumber !== 3) {
+            openExample(true);
+          }
         },
         onBackToMap,
         stars
@@ -641,10 +692,22 @@ export function startGame(
   orderView.onHint(() => {
     if (locked) return;
 
+    const wordProblem = currentWordProblem();
+
+    if (wordProblem) {
+      orderView.showMessage(
+        "Hint: " + wordProblem.getHint()
+      );
+
+      return;
+    }
+
     openExample(false);
   });
 
-  //Starts the first order with an introduction
   beginOrder();
-  openExample(true);
+
+  if (levelNumber !== 3) {
+    openExample(true);
+  }
 }
