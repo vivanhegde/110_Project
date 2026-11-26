@@ -167,12 +167,25 @@ export class LevelView
     this.results.hidden = true;
   }
 
-  // Turns one order into the text shown in the results list.
-  // Subtraction orders know both numbers, so we can show the whole equation: "6/8 - 2/8 = 4/8".
-  // Addition orders only store the answer right now, so we just show "5/8".
+  // Show original US11 questions and existing same-denominator equations.
   private getEquationText(order: PizzaOrder): string
   {
     const answer = order.numerator + "/" + order.denominator;
+
+    // Use the original fractions for unlike-denominator orders.
+    const unlike = order.unlikeOrder;
+
+    if (unlike)
+    {
+      const symbol = unlike.operation === "subtraction" ? "-" : "+";
+
+      return (
+        `${unlike.firstNumerator}/${unlike.firstDenominator} ` +
+        `${symbol} ` +
+        `${unlike.secondNumerator}/${unlike.secondDenominator} = ` +
+        `${answer}`
+      );
+    }
 
     // Only a SubtractionOrder has initialNumerator, so this is how we tell them apart
     if ("initialNumerator" in order)

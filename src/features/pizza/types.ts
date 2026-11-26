@@ -9,6 +9,9 @@ export interface PizzaOrder {
   // Information displayed by the view.
   customerName?: string;
   request?: string;
+
+  // Preserve the original unlike-denominator question.
+  unlikeOrder?: UnlikeDenominatorOrder;
 }
 
 export interface AnswerResult {

@@ -1,6 +1,9 @@
 import { PizzaOrderModel } from "../pizza/PizzaOrderModel";
 import { PizzaOrderController } from "../pizza/PizzaOrderController";
 import { PizzaOrderView } from "../pizza/PizzaOrderView";
+import {
+  UnlikeDenominatorOrderController,
+} from "../pizza/UnlikeDenominatorOrderController";
 
 import { PlateModel } from "../plate/PlateModel";
 import { PlateController } from "../plate/PlateController";
@@ -55,6 +58,71 @@ function isSubtraction(
 
 //Builds a worked example for the current order
 function buildExample(order: PizzaOrder): WorkedExample {
+  // Build conversion steps for unlike-denominator orders.
+  const unlike = order.unlikeOrder;
+
+  if (unlike) {
+    const subtract = unlike.operation === "subtraction";
+    const symbol = subtract ? "−" : "+";
+    const operationWord = subtract ? "minus" : "plus";
+
+    // Describe how each original fraction is converted.
+    const firstMultiplier =
+      unlike.commonDenominator / unlike.firstDenominator;
+
+    const secondMultiplier =
+      unlike.commonDenominator / unlike.secondDenominator;
+
+    return {
+      type: subtract ? "Subtraction" : "Addition",
+      steps: [
+        {
+          // Start with the original question.
+          explanation:
+            `Read the customer's order: ` +
+            `${unlike.firstNumerator}/${unlike.firstDenominator} ` +
+            `${operationWord} ` +
+            `${unlike.secondNumerator}/${unlike.secondDenominator}.`,
+          // Reuse the shared full-equation display.
+          pizzas: [order]
+        },
+        {
+          // Explain the least common denominator.
+          explanation:
+            `Find the smallest number divisible by both ` +
+            `${unlike.firstDenominator} and ` +
+            `${unlike.secondDenominator}. ` +
+            `It is ${unlike.commonDenominator}, so divide ` +
+            `the pizza into ${unlike.commonDenominator} equal slices.`,
+          pizzas: [order]
+        },
+        {
+          // Explain equivalent fractions without changing their amounts.
+          explanation:
+            `Multiply the numerator and denominator of ` +
+            `${unlike.firstNumerator}/${unlike.firstDenominator} ` +
+            `by ${firstMultiplier} to get ` +
+            `${unlike.convertedFirstNumerator}/${unlike.commonDenominator}. ` +
+            `Multiply the numerator and denominator of ` +
+            `${unlike.secondNumerator}/${unlike.secondDenominator} ` +
+            `by ${secondMultiplier} to get ` +
+            `${unlike.convertedSecondNumerator}/${unlike.commonDenominator}.`,
+          pizzas: [order]
+        },
+        {
+          // Complete the operation using equal-sized slices.
+          explanation:
+            `${subtract ? "Subtract" : "Add"} the numerators: ` +
+            `${unlike.convertedFirstNumerator} ${symbol} ` +
+            `${unlike.convertedSecondNumerator} = ` +
+            `${unlike.resultNumerator}. ` +
+            `Keep ${unlike.commonDenominator} as the denominator.`,
+          pizzas: [order]
+        }
+      ]
+    };
+  }
+
   if (isSubtraction(order)) {
     return {
       type: "Subtraction",
@@ -222,6 +290,8 @@ export function startGame(
   plateView.setController(plateController);
 
   let currentAddition: PizzaOrderController | null = null;
+  // Manage cutting and answering for the current US11 order.
+  let currentUnlike: UnlikeDenominatorOrderController | null = null;
   let locked = false;
 
   //Return the currently active level order.
@@ -244,12 +314,51 @@ export function startGame(
       : null;
   }
 
-  //Updates the fraction counter whenever a slice moves
-  plateController.setOnSliceCountChanged(() => {
+  // Refresh slice counts, cutting controls, and dragging.
+  function refreshPlateState(): void {
     if (level.isLevelComplete()) return;
 
     const order = current();
 
+    if (currentUnlike) {
+      const cutting = currentUnlike.getStage() === "cutting";
+      const denominator = currentUnlike.getDenominator();
+      const unlike = currentUnlike.getOrder();
+
+      // Show the equivalent starting amount while choosing cuts.
+      const selected = cutting
+        ? unlike.firstNumerator * denominator /
+          unlike.firstDenominator
+        : currentUnlike.getSelectedSlices();
+
+      orderView.showSelectedSlices(selected, denominator);
+
+      // Keep both tray captions aligned with the current cuts and moves.
+      const placed = cutting ? 0 : plateController.getSlicesOnPlate();
+      const remaining = cutting || unlike.operation === "subtraction"
+        ? selected
+        : denominator - placed;
+      plateView.showSliceCounts(remaining, placed, denominator);
+
+      orderView.showCuttingControls({
+        cutting,
+        denominator,
+        canFewer: currentUnlike.canStepDenominator(-1),
+        canMore: currentUnlike.canStepDenominator(1),
+        canChangeCuts: currentUnlike.canStartCutting(),
+        locked,
+      });
+
+      orderView.setCheckEnabled(!cutting && !locked);
+
+      plateView.setInteractionEnabled(
+        !cutting && !locked && examplePanel.hidden === true
+      );
+
+      return;
+    }
+
+    // Keep the existing same-denominator behavior.
     const selected = isSubtraction(order)
       ? plateController.getRemainingSlices()
       : plateController.getSlicesOnPlate();
@@ -258,7 +367,9 @@ export function startGame(
       selected,
       order.denominator
     );
-  });
+
+    orderView.showCuttingControls(null);
+  }
 
   //Displays a worked example
   function openExample(beforeLevel: boolean): void {
@@ -281,7 +392,12 @@ export function startGame(
         examplePanel.hidden = true;
         content.hidden = false;
 
-        plateView.setInteractionEnabled(!locked);
+        if (currentUnlike) {
+          // Restore US11 controls according to the current stage.
+          refreshPlateState();
+        } else {
+          plateView.setInteractionEnabled(!locked);
+        }
       },
       beforeLevel
     );
@@ -294,10 +410,23 @@ export function startGame(
     locked = false;
     feedback.startNewOrder();
     renderExplanation(explanationPanel);
-    currentAddition = null;
 
-    //Subtraction and addition share the same plate
-    if (isSubtraction(order)) {
+    currentAddition = null;
+    currentUnlike = null;
+
+    // Reconnect the shared callback when switching away from a US11 order.
+    plateController.setOnSliceCountChanged(refreshPlateState);
+
+    if (order.unlikeOrder) {
+      // Let the US11 controller manage cutting and slice changes.
+      currentUnlike = new UnlikeDenominatorOrderController(
+        plateController,
+        plateView
+      );
+
+      currentUnlike.setOnStateChanged(refreshPlateState);
+      currentUnlike.startOrder(order.unlikeOrder);
+    } else if (isSubtraction(order)) {
       plateController.startSubtractionOrder(order);
     } else {
       plateController.startOrder(order.denominator);
@@ -307,7 +436,9 @@ export function startGame(
       );
     }
 
-    plateView.setInteractionEnabled(true);
+    if (!currentUnlike) {
+      plateView.setInteractionEnabled(true);
+    }
 
     // Update the customer and level displays.
     orderView.showOrder(order, levelNumber === 3);
@@ -318,22 +449,96 @@ export function startGame(
     const wordProblem = currentWordProblem();
 
     orderView.showMessage(
-      wordProblem
-        ? "Read the word problem and use the pizza slices to solve it."
-        : isSubtraction(order)
-          ? "Drag slices from the starting pizza to the return plate. Check how many remain."
-          : "Move slices from the tray onto your plate, then check your order."
+      currentUnlike
+        ? "Choose the least common denominator, then click Confirm."
+        : wordProblem
+          ? "Read the word problem and use the pizza slices to solve it."
+          : isSubtraction(order)
+            ? "Drag slices from the starting pizza to the return plate. Check how many remain."
+            : "Move slices from the tray onto your plate, then check your order."
     );
 
     orderView.showSelectedSlices(
       isSubtraction(order) ? order.initialNumerator : 0,
       order.denominator
     );
+
+    if (currentUnlike) {
+      // Apply US11's current denominator and cutting state after rendering.
+      refreshPlateState();
+    }
   }
+
+  // Change the selected denominator through the US11 controller.
+  orderView.onStepDenominator(direction => {
+    if (
+      locked ||
+      !currentUnlike ||
+      currentUnlike.getStage() !== "cutting"
+    ) {
+      return;
+    }
+
+    currentUnlike.stepDenominator(direction);
+
+    orderView.showMessage(
+      "Choose the least common denominator, then click Confirm."
+    );
+  });
+
+  // Check every submitted denominator before allowing dragging.
+  orderView.onConfirmCutting(() => {
+    if (
+      locked ||
+      !currentUnlike ||
+      currentUnlike.getStage() !== "cutting"
+    ) {
+      return;
+    }
+
+    const result = currentUnlike.checkCutting();
+
+    if (!result.correct) {
+      orderView.showMessage(result.message, "incorrect");
+      return;
+    }
+
+    currentUnlike.confirmCutting();
+
+    orderView.showMessage(
+      `${result.message} Move slices to complete the order.`
+    );
+  });
+
+  // Reopen cutting after all moved slices have been returned.
+  orderView.onChangeCuts(() => {
+    if (
+      locked ||
+      !currentUnlike ||
+      currentUnlike.getStage() !== "answering" ||
+      !currentUnlike.canStartCutting()
+    ) {
+      return;
+    }
+
+    currentUnlike.startCutting();
+
+    orderView.showMessage(
+      "Choose the least common denominator, then click Confirm."
+    );
+  });
 
   //Handles Check Order
   orderView.onCheck(() => {
     if (locked || feedback.getCurrentFeedback()) {
+      return;
+    }
+
+    // Require confirmed cuts before checking a US11 answer.
+    if (
+      currentUnlike &&
+      currentUnlike.getStage() !== "answering"
+    ) {
       return;
     }
 
@@ -342,7 +547,11 @@ export function startGame(
     let answer: number;
     let result: AnswerResult;
 
-    if (isSubtraction(order)) {
+    if (currentUnlike) {
+      // Check the actual plate state through the US11 controller.
+      answer = currentUnlike.getSelectedSlices();
+      result = currentUnlike.checkAnswer();
+    } else if (isSubtraction(order)) {
       //Subtraction checks what remains
       answer = plateController.getRemainingSlices();
 
@@ -395,6 +604,11 @@ export function startGame(
     plateView.setInteractionEnabled(false);
 
     orderView.showAction(response.actionLabel);
+
+    if (currentUnlike) {
+      // Lock cutting controls while feedback is displayed.
+      refreshPlateState();
+    }
   });
 
   //Handles Try Again or Next Order.
@@ -412,6 +626,11 @@ export function startGame(
       plateView.setInteractionEnabled(true);
 
       orderView.resetControls();
+
+      if (currentUnlike) {
+        // Restore cutting controls and preserve the current slices.
+        refreshPlateState();
+      }
 
       orderView.showMessage(
         "Try moving slices again, then check your answer."

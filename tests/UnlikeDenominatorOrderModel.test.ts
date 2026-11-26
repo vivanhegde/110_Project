@@ -33,6 +33,7 @@ describe("UnlikeDenominatorOrderModel", () => {
       denominator: 12,
       firstNumerator: 4,
       secondNumerator: 3,
+      unlikeOrder: order,
     });
   });
 
@@ -48,6 +49,7 @@ describe("UnlikeDenominatorOrderModel", () => {
       denominator: 12,
       initialNumerator: 9,
       subtractNumerator: 2,
+      unlikeOrder: order,
     });
   });
 
@@ -159,6 +161,7 @@ describe("UnlikeDenominatorOrderModel", () => {
     const order = createUnlikeDenominatorOrder(
       "addition", 1, 3, 1, 4,
     );
+    const expected = { ...order }; // Validated data before external changes.
 
     order.commonDenominator = 6;
     order.convertedFirstNumerator = 99;
@@ -172,6 +175,7 @@ describe("UnlikeDenominatorOrderModel", () => {
       denominator: 12,
       firstNumerator: 4,
       secondNumerator: 3,
+      unlikeOrder: expected,
     });
     expect(model.checkAnswer(7, 12).correct).toBe(true);
   });
@@ -186,24 +190,33 @@ describe("UnlikeDenominatorOrderModel", () => {
     order.firstNumerator = 0;
 
     expect(model.getOrder().firstNumerator).toBe(1);
+    expect(model.getCommonOrder().unlikeOrder?.firstNumerator).toBe(1);
     expect(model.checkAnswer(7, 12).correct).toBe(true);
   });
 
   // Protect internal data returned through getters.
-  it("returns independent copies of order data", () => {
+  it.each(["addition", "subtraction"] as const)("returns independent copies of %s order data", operation => {
     const order = createUnlikeDenominatorOrder(
-      "addition", 1, 3, 1, 4,
+      operation, 1, 3, 1, 4,
     );
     const model = new UnlikeDenominatorOrderModel(order);
 
     const original = model.getOrder();
     const converted = model.getCommonOrder();
+    const another = model.getCommonOrder(); // Independent conversion result.
+
+    expect(converted.unlikeOrder).toEqual(order);
+    expect(converted.unlikeOrder).not.toBe(another.unlikeOrder);
 
     original.resultNumerator = 0;
     converted.numerator = 0;
+    converted.unlikeOrder!.firstNumerator = 0;
+    converted.unlikeOrder!.resultNumerator = 0;
 
-    expect(model.getOrder().resultNumerator).toBe(7);
-    expect(model.getCommonOrder().numerator).toBe(7);
-    expect(model.checkAnswer(7, 12).correct).toBe(true);
+    expect(model.getOrder()).toEqual(order);
+    expect(model.getCommonOrder().numerator).toBe(order.resultNumerator);
+    expect(model.getCommonOrder().unlikeOrder).toEqual(order);
+    expect(another.unlikeOrder).toEqual(order);
+    expect(model.checkAnswer(order.resultNumerator, 12).correct).toBe(true);
   });
 });

@@ -388,6 +388,12 @@ export class PlateView {
         }
     }
 
+    // Show actual tray and plate amounts for unlike-denominator orders.
+    public showSliceCounts(remaining: number, placed: number, denominator: number): void {
+        this.trayBottomText.text(`${remaining} of ${denominator} slices left in the tray`);
+        this.plateBottomText.text(`${placed} of ${denominator} slices placed`);
+    }
+
     public showTrayText(denominator: number): void {
         this.trayBottomText.text(this.subtractionOrder
             ? `${this.subtractionOrder.initialNumerator} of ${denominator} slices left in the tray`
